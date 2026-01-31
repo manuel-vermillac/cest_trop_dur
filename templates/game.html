@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>C'est Trop Dur - Partie en cours</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+        color: #fff;
+      }
+
+      .game-container {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        grid-template-rows: auto 1fr;
+        height: 100vh;
+        gap: 0;
+      }
+
+      /* Header */
+      .game-header {
+        grid-column: 1 / -1;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .game-info { display: flex; align-items: center; gap: 20px; }
+      .round-info { font-weight: 700; color: #ffd700; font-size: 1.1rem; }
+      .drawer-info { font-size: 0.95rem; opacity: 0.9; }
+      .word-display {
+        font-size: 1.3rem; font-weight: 700; letter-spacing: 4px;
+        color: #ffd700; text-align: center;
+      }
+      .timer {
+        font-size: 1.5rem; font-weight: 700; color: #ffd700;
+        background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 8px;
+        min-width: 60px; text-align: center;
+      }
+      .timer.warning { color: #ff5722; animation: pulse 1s infinite; }
+      @keyframes pulse { 50% { opacity: 0.5; } }
+
+      /* Canvas area */
+      .canvas-area {
+        display: flex;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+      .canvas-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+      }
+      canvas {
+        background: #fff;
+        border-radius: 8px;
+        cursor: crosshair;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        max-width: 100%;
+        max-height: 100%;
+      }
+
+      /* Drawing tools */
+      .tools {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
+        background: rgba(0, 0, 0, 0.4);
+        flex-wrap: wrap;
+      }
+      .color-btn {
+        width: 30px; height: 30px; border-radius: 50%; border: 3px solid transparent;
+        cursor: pointer; transition: all 0.2s;
+      }
+      .color-btn:hover, .color-btn.active { border-color: #ffd700; transform: scale(1.2); }
+      .size-btn {
+        padding: 5px 12px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;
+        transition: all 0.2s;
+      }
+      .size-btn:hover, .size-btn.active { border-color: #ffd700; background: rgba(255,215,0,0.2); }
+      .tool-btn {
+        padding: 5px 12px; border-radius: 6px; border: 2px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.1); color: #fff; cursor: pointer; font-weight: 600;
+        transition: all 0.2s;
+      }
+      .tool-btn:hover { border-color: #ffd700; background: rgba(255,215,0,0.2); }
+
+      /* Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.5);
+        border-left: 1px solid rgba(255,255,255,0.1);
+      }
+
+      /* Scores */
+      .scores {
+        padding: 10px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .scores h3 { font-size: 0.9rem; color: #ffd700; margin-bottom: 8px; }
+      .score-item {
+        display: flex; justify-content: space-between; padding: 4px 8px;
+        border-radius: 4px; margin-bottom: 3px; font-size: 0.85rem;
+      }
+      .score-item.drawing { background: rgba(255, 215, 0, 0.2); }
+      .score-item.guessed { background: rgba(76, 175, 80, 0.2); }
+      .score-points { font-weight: 700; color: #ffd700; }
+
+      /* Chat */
+      .chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .chat-msg { font-size: 0.85rem; padding: 3px 0; }
+      .chat-msg .name { font-weight: 700; }
+      .chat-msg.correct { color: #4caf50; font-weight: 700; }
+      .chat-msg.system { color: #ffd700; font-style: italic; }
+      .chat-input-wrapper {
+        display: flex;
+        padding: 8px;
+        gap: 5px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+      }
+      .chat-input {
+        flex: 1; padding: 8px 12px; border-radius: 8px;
+        border: 2px solid rgba(255,215,0,0.3); background: rgba(0,0,0,0.3);
+        color: #fff; font-size: 0.9rem;
+      }
+      .chat-input:focus { outline: none; border-color: #ffd700; }
+      .chat-input:disabled { opacity: 0.5; }
+      .chat-send {
+        padding: 8px 15px; border-radius: 8px; border: none;
+        background: #ffd700; color: #1a1a2e; font-weight: 700; cursor: pointer;
+      }
+      .chat-send:hover { background: #ffed4a; }
+      .chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+      /* Voice */
+      .voice-mini {
+        padding: 8px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+      }
+      .voice-mini-btn {
+        padding: 6px 14px; border-radius: 6px; border: 2px solid;
+        font-weight: 600; cursor: pointer; font-size: 0.85rem;
+      }
+      .voice-mini-btn.muted { background: #f44336; color: white; border-color: #d32f2f; }
+      .voice-mini-btn.unmuted { background: #4caf50; color: white; border-color: #388e3c; }
+
+      /* Overlays */
+      .overlay {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.8); display: flex; flex-direction: column;
+        align-items: center; justify-content: center; z-index: 10;
+        border-radius: 8px;
+      }
+      .overlay.hidden { display: none; }
+      .card-choices {
+        display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;
+      }
+      .card-choice {
+        padding: 20px 30px; background: rgba(255,215,0,0.15); border: 2px solid #ffd700;
+        border-radius: 10px; color: #ffd700; font-size: 1.2rem; font-weight: 700;
+        cursor: pointer; transition: all 0.3s;
+      }
+      .card-choice:hover {
+        background: #ffd700; color: #1a1a2e; transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+      }
+      .overlay h2 { margin-bottom: 20px; color: #ffd700; font-size: 1.5rem; }
+      .overlay p { margin: 10px 0; font-size: 1.1rem; }
+      .overlay .btn-next {
+        margin-top: 20px; padding: 12px 30px; background: #ffd700; color: #1a1a2e;
+        border: none; border-radius: 8px; font-size: 1rem; font-weight: 700;
+        cursor: pointer; transition: all 0.3s;
+      }
+      .overlay .btn-next:hover { background: #ffed4a; transform: translateY(-2px); }
+
+      /* Final scores */
+      .final-scores { text-align: center; }
+      .final-scores .podium { margin: 20px 0; }
+      .final-scores .podium-item {
+        font-size: 1.2rem; padding: 8px; margin: 5px 0;
+      }
+      .final-scores .podium-item:first-child {
+        font-size: 1.5rem; color: #ffd700; font-weight: 700;
+      }
+
+      @media (max-width: 768px) {
+        .game-container {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr auto;
+        }
+        .sidebar {
+          border-left: none;
+          border-top: 1px solid rgba(255,255,255,0.1);
+          max-height: 250px;
+        }
+        .scores { max-height: 80px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game-container">
+      <div class="game-header">
+        <div class="game-info">
+          <span class="round-info" id="roundInfo">Tour 1/1</span>
+          <span class="drawer-info" id="drawerInfo">...</span>
+        </div>
+        <div class="word-display" id="wordDisplay"></div>
+        <div class="timer" id="timer">--</div>
+      </div>
+
+      <div class="canvas-area">
+        <div class="canvas-wrapper">
+          <canvas id="drawCanvas" width="800" height="600"></canvas>
+        </div>
+        <div class="tools" id="drawTools" style="display:none;">
+          <div class="color-btn active" style="background:#000" data-color="#000000"></div>
+          <div class="color-btn" style="background:#ff0000" data-color="#ff0000"></div>
+          <div class="color-btn" style="background:#0000ff" data-color="#0000ff"></div>
+          <div class="color-btn" style="background:#00aa00" data-color="#00aa00"></div>
+          <div class="color-btn" style="background:#ff9800" data-color="#ff9800"></div>
+          <div class="color-btn" style="background:#9c27b0" data-color="#9c27b0"></div>
+          <div class="color-btn" style="background:#795548" data-color="#795548"></div>
+          <div class="color-btn" style="background:#fff; border-color: #ccc;" data-color="#ffffff"></div>
+          <span style="color:rgba(255,255,255,0.4);">|</span>
+          <button class="size-btn active" data-size="3">Fin</button>
+          <button class="size-btn" data-size="8">Moyen</button>
+          <button class="size-btn" data-size="16">Gros</button>
+          <span style="color:rgba(255,255,255,0.4);">|</span>
+          <button class="tool-btn" id="eraserBtn" data-tool="eraser">Gomme</button>
+          <button class="tool-btn" id="clearBtn">Effacer tout</button>
+        </div>
+
+        <!-- Overlay: choosing word -->
+        <div class="overlay hidden" id="choosingOverlay">
+          <h2>Choisissez un mot a dessiner</h2>
+          <div class="card-choices" id="cardChoices"></div>
+        </div>
+
+        <!-- Overlay: waiting for drawer to choose -->
+        <div class="overlay hidden" id="waitingChooseOverlay">
+          <h2 id="waitingChooseText">Le dessinateur choisit un mot...</h2>
+        </div>
+
+        <!-- Overlay: round end -->
+        <div class="overlay hidden" id="roundEndOverlay">
+          <h2>Fin du tour !</h2>
+          <p>Le mot etait : <strong id="revealWord"></strong></p>
+          <button class="btn-next hidden" id="nextTurnBtn" onclick="requestNextTurn()">Tour suivant</button>
+          <p class="waiting-message hidden" id="waitingNextMsg" style="color:rgba(255,255,255,0.6);font-style:italic;">
+            En attente de l'hote...
+          </p>
+        </div>
+
+        <!-- Overlay: game over -->
+        <div class="overlay hidden" id="gameOverOverlay">
+          <div class="final-scores">
+            <h2>Partie terminee !</h2>
+            <p>Le mot etait : <strong id="revealWordFinal"></strong></p>
+            <div class="podium" id="podium"></div>
+            <a href="/" class="btn-next" style="text-decoration:none;display:inline-block;">Retour a l'accueil</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="voice-mini">
+          <button id="voiceMiniBtn" class="voice-mini-btn muted" onclick="toggleVoice()">Micro OFF</button>
+        </div>
+        <div class="scores" id="scoresPanel"></div>
+        <div class="chat">
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-wrapper">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Tapez votre reponse..."
+                   autocomplete="off" maxlength="100">
+            <button class="chat-send" id="chatSend" onclick="sendGuess()">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const roomCode = '{{ room.code }}';
+      const myPlayerId = '{{ player_id }}';
+      const isHost = {{ 'true' if player_id == room.host_player_id else 'false' }};
+
+      const socket = io({ transports: ['polling'] });
+      const canvas = document.getElementById('drawCanvas');
+      const ctx = canvas.getContext('2d');
+
+      let currentColor = '#000000';
+      let currentSize = 3;
+      let isEraser = false;
+      let isDrawing = false;
+      let lastX = 0, lastY = 0;
+      let amDrawer = false;
+      let gameState = null;
+      let timerInterval = null;
+
+      // ==================== Socket ====================
+      socket.on('connect', () => {
+        socket.emit('join_game', { room: roomCode });
+      });
+
+      socket.on('game_state_updated', (state) => {
+        gameState = state;
+        updateUI(state);
+      });
+
+      socket.on('draw_event', (data) => {
+        drawLine(data.x1, data.y1, data.x2, data.y2, data.color, data.size);
+      });
+
+      socket.on('clear_canvas', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      });
+
+      socket.on('chat_message', (data) => {
+        addChatMessage(data.player_name, data.text, data.correct);
+      });
+
+      // ==================== UI Update ====================
+      function updateUI(state) {
+        amDrawer = (state.current_drawer_id === myPlayerId);
+
+        // Header
+        document.getElementById('roundInfo').textContent = `Tour ${state.round}/${state.total_rounds}`;
+        document.getElementById('drawerInfo').textContent = amDrawer
+          ? 'Vous dessinez !'
+          : `${state.current_drawer_name} dessine`;
+
+        // Word display
+        const wordDisplay = document.getElementById('wordDisplay');
+        if (amDrawer && state.current_word) {
+          wordDisplay.textContent = state.current_word;
+        } else if (state.word_hint) {
+          wordDisplay.textContent = state.word_hint;
+        } else if (state.current_word) {
+          wordDisplay.textContent = state.current_word;
+        } else {
+          wordDisplay.textContent = '';
+        }
+
+        // Timer
+        updateTimer(state.remaining_time);
+
+        // Tools visibility
+        document.getElementById('drawTools').style.display = (amDrawer && state.phase === 'drawing') ? 'flex' : 'none';
+
+        // Canvas cursor
+        canvas.style.cursor = (amDrawer && state.phase === 'drawing') ? 'crosshair' : 'default';
+        canvas.style.pointerEvents = (amDrawer && state.phase === 'drawing') ? 'auto' : 'none';
+
+        // Chat input - le dessinateur ne peut pas deviner
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+        const hasGuessed = state.guessed_players && state.guessed_players.includes(myPlayerId);
+        if (amDrawer || state.phase !== 'drawing' || hasGuessed) {
+          chatInput.disabled = true;
+          chatSend.disabled = true;
+          if (amDrawer) chatInput.placeholder = 'Vous dessinez...';
+          else if (hasGuessed) chatInput.placeholder = 'Vous avez devine !';
+          else chatInput.placeholder = 'Tapez votre reponse...';
+        } else {
+          chatInput.disabled = false;
+          chatSend.disabled = false;
+          chatInput.placeholder = 'Tapez votre reponse...';
+        }
+
+        // Scores
+        updateScores(state);
+
+        // Overlays
+        hideAllOverlays();
+
+        if (state.phase === 'choosing') {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          if (amDrawer && state.card_choices) {
+            showChoosingOverlay(state.card_choices);
+          } else {
+            showWaitingChooseOverlay(state.current_drawer_name);
+          }
+        } else if (state.phase === 'round_end') {
+          showRoundEndOverlay(state.current_word);
+        } else if (state.phase === 'game_over') {
+          showGameOverOverlay(state);
+        }
+      }
+
+      function updateTimer(remaining) {
+        const timerEl = document.getElementById('timer');
+        if (remaining > 0) {
+          timerEl.textContent = remaining + 's';
+          timerEl.classList.toggle('warning', remaining <= 15);
+          // Set up client-side countdown
+          clearInterval(timerInterval);
+          let t = remaining;
+          timerInterval = setInterval(() => {
+            t--;
+            if (t <= 0) {
+              clearInterval(timerInterval);
+              timerEl.textContent = '0s';
+              // Notify server time is up
+              socket.emit('timer_expired', { room: roomCode });
+            } else {
+              timerEl.textContent = t + 's';
+              timerEl.classList.toggle('warning', t <= 15);
+            }
+          }, 1000);
+        } else {
+          timerEl.textContent = '--';
+          timerEl.classList.remove('warning');
+          clearInterval(timerInterval);
+        }
+      }
+
+      function updateScores(state) {
+        const panel = document.getElementById('scoresPanel');
+        const sorted = Object.entries(state.scores)
+          .map(([pid, score]) => ({
+            pid, score,
+            name: state.player_names[pid] || '???',
+            isDrawer: pid === state.current_drawer_id,
+            hasGuessed: state.guessed_players && state.guessed_players.includes(pid)
+          }))
+          .sort((a, b) => b.score - a.score);
+
+        panel.innerHTML = '<h3>Scores</h3>' + sorted.map(p => {
+          let cls = '';
+          if (p.isDrawer) cls = 'drawing';
+          else if (p.hasGuessed) cls = 'guessed';
+          return `<div class="score-item ${cls}">
+            <span>${p.name} ${p.isDrawer ? '(dessine)' : ''} ${p.hasGuessed ? '(devine)' : ''}</span>
+            <span class="score-points">${p.score} pts</span>
+          </div>`;
+        }).join('');
+      }
+
+      // ==================== Overlays ====================
+      function hideAllOverlays() {
+        document.querySelectorAll('.overlay').forEach(o => o.classList.add('hidden'));
+      }
+
+      function showChoosingOverlay(choices) {
+        const overlay = document.getElementById('choosingOverlay');
+        overlay.classList.remove('hidden');
+        const container = document.getElementById('cardChoices');
+        container.innerHTML = choices.map((word, i) =>
+          `<div class="card-choice" onclick="chooseWord(${i})">${word}</div>`
+        ).join('');
+      }
+
+      function showWaitingChooseOverlay(drawerName) {
+        const overlay = document.getElementById('waitingChooseOverlay');
+        overlay.classList.remove('hidden');
+        document.getElementById('waitingChooseText').textContent = `${drawerName} choisit un mot...`;
+      }
+
+      function showRoundEndOverlay(word) {
+        const overlay = document.getElementById('roundEndOverlay');
+        overlay.classList.remove('hidden');
+        document.getElementById('revealWord').textContent = word || '???';
+        if (isHost) {
+          document.getElementById('nextTurnBtn').classList.remove('hidden');
+          document.getElementById('waitingNextMsg').classList.add('hidden');
+        } else {
+          document.getElementById('nextTurnBtn').classList.add('hidden');
+          document.getElementById('waitingNextMsg').classList.remove('hidden');
+        }
+      }
+
+      function showGameOverOverlay(state) {
+        const overlay = document.getElementById('gameOverOverlay');
+        overlay.classList.remove('hidden');
+        document.getElementById('revealWordFinal').textContent = state.current_word || '';
+
+        const sorted = Object.entries(state.scores)
+          .map(([pid, score]) => ({ name: state.player_names[pid], score }))
+          .sort((a, b) => b.score - a.score);
+
+        const medals = ['1er', '2eme', '3eme'];
+        document.getElementById('podium').innerHTML = sorted.map((p, i) =>
+          `<div class="podium-item">${medals[i] || (i+1)+'eme'} - ${p.name} : ${p.score} pts</div>`
+        ).join('');
+      }
+
+      // ==================== Actions ====================
+      function chooseWord(index) {
+        socket.emit('choose_word', { room: roomCode, index: index });
+      }
+
+      function requestNextTurn() {
+        socket.emit('request_next_turn', { room: roomCode });
+      }
+
+      function sendGuess() {
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+        socket.emit('guess', { room: roomCode, text: text });
+        input.value = '';
+      }
+
+      document.getElementById('chatInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendGuess();
+      });
+
+      function addChatMessage(name, text, correct) {
+        const container = document.getElementById('chatMessages');
+        const div = document.createElement('div');
+        if (correct) {
+          div.className = 'chat-msg correct';
+          div.textContent = `${name} a devine le mot !`;
+        } else {
+          div.className = 'chat-msg';
+          div.innerHTML = `<span class="name">${name}:</span> ${text}`;
+        }
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      // ==================== Canvas Drawing ====================
+      function getCanvasCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        if (e.touches) {
+          return {
+            x: (e.touches[0].clientX - rect.left) * scaleX,
+            y: (e.touches[0].clientY - rect.top) * scaleY
+          };
+        }
+        return {
+          x: (e.clientX - rect.left) * scaleX,
+          y: (e.clientY - rect.top) * scaleY
+        };
+      }
+
+      function startDrawing(e) {
+        if (!amDrawer) return;
+        e.preventDefault();
+        isDrawing = true;
+        const coords = getCanvasCoords(e);
+        lastX = coords.x;
+        lastY = coords.y;
+      }
+
+      function draw(e) {
+        if (!isDrawing || !amDrawer) return;
+        e.preventDefault();
+        const coords = getCanvasCoords(e);
+        const color = isEraser ? '#ffffff' : currentColor;
+        const size = isEraser ? currentSize * 3 : currentSize;
+
+        drawLine(lastX, lastY, coords.x, coords.y, color, size);
+        socket.emit('draw', {
+          room: roomCode,
+          draw_event: { x1: lastX, y1: lastY, x2: coords.x, y2: coords.y, color: color, size: size }
+        });
+        lastX = coords.x;
+        lastY = coords.y;
+      }
+
+      function stopDrawing() {
+        isDrawing = false;
+      }
+
+      function drawLine(x1, y1, x2, y2, color, size) {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = size;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      // Mouse events
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDrawing);
+      canvas.addEventListener('mouseout', stopDrawing);
+      // Touch events
+      canvas.addEventListener('touchstart', startDrawing);
+      canvas.addEventListener('touchmove', draw);
+      canvas.addEventListener('touchend', stopDrawing);
+
+      // Color buttons
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentColor = btn.dataset.color;
+          isEraser = false;
+          document.getElementById('eraserBtn').classList.remove('active');
+        });
+      });
+
+      // Size buttons
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentSize = parseInt(btn.dataset.size);
+        });
+      });
+
+      // Eraser
+      document.getElementById('eraserBtn').addEventListener('click', function() {
+        isEraser = !isEraser;
+        this.classList.toggle('active');
+      });
+
+      // Clear canvas
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        socket.emit('clear_canvas', { room: roomCode });
+      });
+
+      // ==================== Voice Chat ====================
+      let localStream = null;
+      let peerConnections = {};
+      let isMuted = true;
+      const iceConfig = { iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]};
+
+      // Restore voice state from lobby
+      if (sessionStorage.getItem('voiceMicEnabled') === 'true') {
+        setTimeout(() => startVoice(), 500);
+      }
+
+      async function toggleVoice() {
+        if (isMuted) await startVoice(); else stopVoice();
+      }
+
+      async function startVoice() {
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+          document.getElementById('voiceMiniBtn').textContent = 'Micro ON';
+          document.getElementById('voiceMiniBtn').className = 'voice-mini-btn unmuted';
+          isMuted = false;
+          socket.emit('join_voice', { room: roomCode });
+        } catch (err) {
+          alert('Impossible d\'acceder au microphone.');
+        }
+      }
+
+      function stopVoice() {
+        if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+        Object.values(peerConnections).forEach(pc => pc.close());
+        peerConnections = {};
+        document.getElementById('voiceMiniBtn').textContent = 'Micro OFF';
+        document.getElementById('voiceMiniBtn').className = 'voice-mini-btn muted';
+        isMuted = true;
+        socket.emit('leave_voice', { room: roomCode });
+      }
+
+      function createPeerConnection(remoteId) {
+        const pc = new RTCPeerConnection(iceConfig);
+        if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+        pc.ontrack = (e) => { const a = new Audio(); a.srcObject = e.streams[0]; a.play(); };
+        pc.onicecandidate = (e) => {
+          if (e.candidate) socket.emit('ice_candidate', { room: roomCode, candidate: e.candidate });
+        };
+        peerConnections[remoteId] = pc;
+        return pc;
+      }
+
+      socket.on('user_joined', async (data) => {
+        if (!localStream) return;
+        const pc = createPeerConnection(data.player_id);
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        socket.emit('offer', { room: roomCode, offer: offer });
+      });
+
+      socket.on('offer', async (data) => {
+        if (!localStream) return;
+        const pc = createPeerConnection(data.from);
+        await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit('answer', { room: roomCode, answer: answer });
+      });
+
+      socket.on('answer', async (data) => {
+        const pc = peerConnections[data.from];
+        if (pc) await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+      });
+
+      socket.on('ice_candidate', async (data) => {
+        const pc = peerConnections[data.from] || Object.values(peerConnections)[0];
+        if (pc) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+      });
+
+      socket.on('user_left', (data) => {
+        if (peerConnections[data.player_id]) {
+          peerConnections[data.player_id].close();
+          delete peerConnections[data.player_id];
+        }
+      });
+
+      window.addEventListener('beforeunload', () => stopVoice());
+    </script>
+  </body>
+</html>

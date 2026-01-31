@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Rejoindre - C'est Trop Dur</title>
+    <style>
+      html, body { height: 100%; margin: 0; padding: 0; }
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+        color: #fff;
+        display: flex; flex-direction: column; min-height: 100vh;
+      }
+      .container {
+        flex: 1; padding: 40px 20px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+      }
+      .content-box {
+        max-width: 500px; width: 100%;
+        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
+        border-radius: 16px; padding: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      h1 { text-align: center; font-size: 2rem; margin: 0 0 30px 0; color: #ffd700; }
+      .form-group { margin-bottom: 25px; }
+      label { display: block; margin-bottom: 8px; font-weight: 600; color: #ffd700; }
+      input[type="text"] {
+        width: 100%; padding: 12px; border-radius: 8px;
+        border: 2px solid rgba(255, 215, 0, 0.3); background: rgba(0, 0, 0, 0.3);
+        color: #fff; font-size: 1rem; box-sizing: border-box;
+      }
+      input[type="text"]:focus { outline: none; border-color: #ffd700; }
+      .btn {
+        display: block; width: 100%; padding: 15px 30px; text-align: center;
+        text-decoration: none; font-weight: 700; font-size: 1.1rem; border-radius: 10px;
+        transition: all 0.3s ease; border: 2px solid transparent; cursor: pointer; box-sizing: border-box;
+      }
+      .btn-primary { background: #ffd700; color: #1a1a2e; border-color: #ffd700; }
+      .btn-primary:hover { background: #ffed4a; transform: translateY(-2px); }
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1); color: #fff;
+        border-color: rgba(255, 255, 255, 0.3); margin-top: 15px;
+      }
+      .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+      .info-text {
+        background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px;
+        margin-bottom: 25px; font-size: 0.9rem; line-height: 1.6;
+      }
+      .error-message {
+        background: rgba(255, 87, 34, 0.3); border: 2px solid #ff5722;
+        padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content-box">
+        <h1>Rejoindre une partie</h1>
+        <div class="info-text">
+          Entrez le code de partie pour rejoindre vos amis.
+        </div>
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+        <form method="POST">
+          <div class="form-group">
+            <label for="code">Code de la partie</label>
+            <input type="text" id="code" name="code" placeholder="Ex: AB12" maxlength="4" required
+                   style="letter-spacing: 4px; font-size: 1.5rem; text-align: center; text-transform: uppercase;">
+          </div>
+          <div class="form-group">
+            <label for="player_name">Votre nom</label>
+            <input type="text" id="player_name" name="player_name" placeholder="Entrez votre nom" maxlength="20" required
+                   style="text-transform: none;">
+          </div>
+          <button type="submit" class="btn btn-primary">Rejoindre</button>
+          <a href="/" class="btn btn-secondary">Annuler</a>
+        </form>
+      </div>
+    </div>
+    <script>
+      document.getElementById('code').addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+      });
+    </script>
+  </body>
+</html>

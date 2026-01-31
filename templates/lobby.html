@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Salon d'attente - C'est Trop Dur</title>
+    <style>
+      html, body { height: 100%; margin: 0; padding: 0; }
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+        color: #fff; display: flex; flex-direction: column; min-height: 100vh;
+      }
+      .container {
+        flex: 1; padding: 40px 20px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+      }
+      .content-box {
+        max-width: 600px; width: 100%;
+        background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);
+        border-radius: 16px; padding: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      h1 { text-align: center; font-size: 2rem; margin: 0 0 10px 0; color: #ffd700; }
+      .room-code {
+        text-align: center; font-size: 2.5rem; letter-spacing: 8px; font-weight: 700;
+        color: #1a1a2e; background: #ffd700; padding: 15px; border-radius: 10px;
+        margin-bottom: 20px; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+      }
+      .share-info {
+        background: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px;
+        margin-bottom: 20px; text-align: center; font-size: 0.9rem;
+      }
+      .share-link {
+        background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 6px;
+        margin-top: 10px; word-break: break-all; font-family: monospace; font-size: 0.85rem;
+      }
+      h2 { font-size: 1.2rem; margin: 20px 0 10px; color: #ffd700; }
+      .players-list {
+        background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;
+      }
+      .player-item {
+        display: flex; align-items: center; gap: 10px; padding: 10px;
+        background: rgba(255, 255, 255, 0.05); border-radius: 6px; margin-bottom: 8px;
+      }
+      .player-item:last-child { margin-bottom: 0; }
+      .player-name { flex: 1; font-weight: 600; }
+      .host-badge {
+        background: #ffd700; color: #1a1a2e; padding: 3px 8px; border-radius: 4px;
+        font-size: 0.75rem; font-weight: 700;
+      }
+      .player-count { text-align: center; color: #ffd700; margin-bottom: 10px; font-weight: 600; }
+      .voice-controls {
+        background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px;
+        margin-bottom: 15px; text-align: center;
+      }
+      .voice-btn {
+        padding: 10px 20px; border-radius: 8px; border: 2px solid;
+        font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 1rem;
+      }
+      .voice-btn.muted { background: #f44336; color: white; border-color: #d32f2f; }
+      .voice-btn.unmuted { background: #4caf50; color: white; border-color: #388e3c; }
+      .voice-btn:hover { transform: translateY(-2px); }
+      .voice-status { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 8px; }
+      .btn {
+        display: block; width: 100%; padding: 15px; text-align: center; text-decoration: none;
+        font-weight: 700; font-size: 1.1rem; border-radius: 10px; transition: all 0.3s;
+        border: 2px solid transparent; cursor: pointer; box-sizing: border-box; margin-top: 10px;
+      }
+      .btn-primary { background: #ffd700; color: #1a1a2e; border-color: #ffd700; }
+      .btn-primary:hover:not(:disabled) { background: #ffed4a; transform: translateY(-2px); }
+      .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+      .btn-secondary {
+        background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.3);
+      }
+      .btn-secondary:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+      .waiting-message { text-align: center; color: rgba(255,255,255,0.6); font-style: italic; margin-top: 10px; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content-box">
+        <h1>Salon d'attente</h1>
+        <div class="room-code">{{ room.code }}</div>
+        <div class="share-info">
+          Partagez ce code avec vos amis pour qu'ils rejoignent
+          <div class="share-link">{{ request.host_url }}join</div>
+        </div>
+
+        <div class="voice-controls">
+          <button id="voiceBtn" class="voice-btn muted" onclick="toggleVoice()">Activer le micro</button>
+          <div class="voice-status" id="voiceStatus">Chat vocal desactive</div>
+        </div>
+
+        <h2>Joueurs connectes</h2>
+        <div class="player-count" id="playerCount">
+          <span id="currentPlayers">{{ room.players|length }}</span> / {{ room.max_players }} joueurs
+        </div>
+        <div class="players-list" id="playersList">
+          {% for pid, pname in room.players.items() %}
+          <div class="player-item">
+            <span class="player-name">{{ pname }}</span>
+            {% if pid == room.host_player_id %}
+            <span class="host-badge">HOTE</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if player_id == room.host_player_id %}
+        <button id="startBtn" class="btn btn-primary" onclick="startGame()" {% if room.players|length < 2 %}disabled{% endif %}>
+          Demarrer la partie
+        </button>
+        <p class="waiting-message" id="waitingMsg" {% if room.players|length >= 2 %}style="display:none;"{% endif %}>
+          En attente d'au moins 2 joueurs...
+        </p>
+        {% else %}
+        <p class="waiting-message">En attente que l'hote demarre la partie...</p>
+        {% endif %}
+        <a href="/" class="btn btn-secondary">Quitter le salon</a>
+      </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+      const roomCode = '{{ room.code }}';
+      const isHost = {{ 'true' if player_id == room.host_player_id else 'false' }};
+
+      const socket = io({ transports: ['polling'] });
+
+      socket.on('connect', () => {
+        socket.emit('join_lobby', { room: roomCode });
+      });
+
+      socket.on('lobby_updated', (data) => {
+        document.getElementById('currentPlayers').textContent = data.players.length;
+        const list = document.getElementById('playersList');
+        list.innerHTML = data.players.map(p => `
+          <div class="player-item">
+            <span class="player-name">${p.name}</span>
+            ${p.id === data.host_id ? '<span class="host-badge">HOTE</span>' : ''}
+          </div>
+        `).join('');
+
+        if (isHost) {
+          const startBtn = document.getElementById('startBtn');
+          const waitingMsg = document.getElementById('waitingMsg');
+          if (data.players.length >= 2) {
+            startBtn.disabled = false;
+            if (waitingMsg) waitingMsg.style.display = 'none';
+          } else {
+            startBtn.disabled = true;
+            if (waitingMsg) waitingMsg.style.display = 'block';
+          }
+        }
+        if (data.started) {
+          sessionStorage.setItem('voiceMicEnabled', (!isMuted).toString());
+          window.location.href = `/game/${roomCode}`;
+        }
+      });
+
+      socket.on('game_started', () => {
+        sessionStorage.setItem('voiceMicEnabled', (!isMuted).toString());
+        window.location.href = `/game/${roomCode}`;
+      });
+
+      function startGame() {
+        fetch(`/lobby/${roomCode}/start`, { method: 'POST' })
+        .then(res => { if (!res.ok) alert('Impossible de demarrer'); })
+        .catch(() => alert('Erreur'));
+      }
+
+      // Voice Chat
+      let localStream = null;
+      let peerConnections = {};
+      let isMuted = true;
+      const iceConfig = { iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]};
+
+      async function toggleVoice() {
+        if (isMuted) { await startVoice(); } else { stopVoice(); }
+      }
+
+      async function startVoice() {
+        try {
+          localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+          document.getElementById('voiceBtn').textContent = 'Couper le micro';
+          document.getElementById('voiceBtn').className = 'voice-btn unmuted';
+          document.getElementById('voiceStatus').textContent = 'Chat vocal active';
+          isMuted = false;
+          socket.emit('join_voice', { room: roomCode });
+        } catch (err) {
+          alert('Impossible d\'acceder au microphone.');
+        }
+      }
+
+      function stopVoice() {
+        if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+        Object.values(peerConnections).forEach(pc => pc.close());
+        peerConnections = {};
+        document.getElementById('voiceBtn').textContent = 'Activer le micro';
+        document.getElementById('voiceBtn').className = 'voice-btn muted';
+        document.getElementById('voiceStatus').textContent = 'Chat vocal desactive';
+        isMuted = true;
+        socket.emit('leave_voice', { room: roomCode });
+      }
+
+      function createPeerConnection(remoteId) {
+        const pc = new RTCPeerConnection(iceConfig);
+        if (localStream) localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+        pc.ontrack = (e) => { const a = new Audio(); a.srcObject = e.streams[0]; a.play(); };
+        pc.onicecandidate = (e) => {
+          if (e.candidate) socket.emit('ice_candidate', { room: roomCode, candidate: e.candidate });
+        };
+        peerConnections[remoteId] = pc;
+        return pc;
+      }
+
+      socket.on('user_joined', async (data) => {
+        if (!localStream) return;
+        const pc = createPeerConnection(data.player_id);
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        socket.emit('offer', { room: roomCode, offer: offer });
+      });
+
+      socket.on('offer', async (data) => {
+        if (!localStream) return;
+        const pc = createPeerConnection(data.from);
+        await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit('answer', { room: roomCode, answer: answer });
+      });
+
+      socket.on('answer', async (data) => {
+        const pc = peerConnections[data.from];
+        if (pc) await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+      });
+
+      socket.on('ice_candidate', async (data) => {
+        const pc = peerConnections[data.from] || Object.values(peerConnections)[0];
+        if (pc) await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+      });
+
+      socket.on('user_left', (data) => {
+        if (peerConnections[data.player_id]) {
+          peerConnections[data.player_id].close();
+          delete peerConnections[data.player_id];
+        }
+      });
+
+      window.addEventListener('beforeunload', () => stopVoice());
+    </script>
+  </body>
+</html>
