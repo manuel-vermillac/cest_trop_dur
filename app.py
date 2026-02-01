@@ -173,6 +173,7 @@ class Game:
         self.designated_player_id = None  # joueur2 désigné
         self.current_drawer_id = None  # qui dessine actuellement
         self.point_winner_id = None  # qui a gagné le point ce tour
+        self.pending_guesses = {}  # {guesser_id: {text, picker_approved, drawer_approved}}
 
     @property
     def current_picker_id(self):
@@ -210,6 +211,7 @@ class Game:
         self.guessed = False
         self.point_winner_id = None
         self.draw_data = []
+        self.pending_guesses = {}
         return True
 
     def check_guess(self, player_id, guess):
@@ -222,17 +224,45 @@ class Game:
         if player_id == self.current_picker_id:
             return False
         if guess.strip().lower() == self.current_word.strip().lower():
-            self.guessed = True
-            # Attribuer 1 point au dessinateur actuel
-            if self.phase == "drawing_player2":
-                self.point_winner_id = self.designated_player_id
-                self.scores[self.designated_player_id] = self.scores.get(self.designated_player_id, 0) + 1
-            else:
-                self.point_winner_id = self.current_picker_id
-                self.scores[self.current_picker_id] = self.scores.get(self.current_picker_id, 0) + 1
-            self.end_drawing()
+            self._award_guess(player_id)
+            return "correct"
+        # Ajouter comme proposition en attente de validation manuelle
+        self.pending_guesses[player_id] = {
+            "text": guess.strip(),
+            "picker_approved": False,
+            "drawer_approved": False,
+        }
+        return "pending"
+
+    def validate_guess(self, validator_id, guesser_id):
+        """Le picker ou dessinateur valide une proposition. Retourne True si les deux ont validé."""
+        if guesser_id not in self.pending_guesses:
+            return False
+        if self.phase not in ("drawing_player2", "drawing_player1"):
+            return False
+        pending = self.pending_guesses[guesser_id]
+        if validator_id == self.current_picker_id:
+            pending["picker_approved"] = True
+        elif validator_id == self.current_drawer_id:
+            pending["drawer_approved"] = True
+        else:
+            return False
+        if pending["picker_approved"] and pending["drawer_approved"]:
+            self._award_guess(guesser_id)
             return True
         return False
+
+    def _award_guess(self, guesser_id):
+        """Attribuer le point au dessinateur actuel et terminer le tour."""
+        self.guessed = True
+        if self.phase == "drawing_player2":
+            self.point_winner_id = self.designated_player_id
+            self.scores[self.designated_player_id] = self.scores.get(self.designated_player_id, 0) + 1
+        else:
+            self.point_winner_id = self.current_picker_id
+            self.scores[self.current_picker_id] = self.scores.get(self.current_picker_id, 0) + 1
+        self.pending_guesses.clear()
+        self.end_drawing()
 
     def timer_expired(self):
         """Appelé quand le timer expire. Gère la transition de phase."""
@@ -242,6 +272,7 @@ class Game:
             self.current_drawer_id = self.current_picker_id
             self.timer_end = time.time() + self.DRAW_TIME
             self.draw_data = []
+            self.pending_guesses = {}
             return "switch_to_player1"
         elif self.phase == "drawing_player1":
             # Joueur1 n'a pas réussi non plus, joueur2 gagne 1 point
@@ -269,6 +300,7 @@ class Game:
         self.designated_player_id = None
         self.current_drawer_id = None
         self.point_winner_id = None
+        self.pending_guesses = {}
         return True
 
     def is_time_up(self):
@@ -320,6 +352,18 @@ class Game:
             state["current_word"] = self.current_word
         else:
             state["word_hint"] = self.get_word_hint()
+
+        # Le picker et le dessinateur voient les propositions en attente
+        if for_player_id in (self.current_picker_id, self.current_drawer_id):
+            state["pending_guesses"] = {
+                gid: {
+                    "text": pg["text"],
+                    "guesser_name": player_names_dict.get(gid, "???"),
+                    "picker_approved": pg["picker_approved"],
+                    "drawer_approved": pg["drawer_approved"],
+                }
+                for gid, pg in self.pending_guesses.items()
+            }
 
         # En fin de tour ou fin de partie, tout le monde voit le mot
         if self.phase in ("round_end", "game_over"):
@@ -427,14 +471,23 @@ def handle_guess(data):
     if not room.game:
         return
 
-    correct = room.game.check_guess(player_id, guess_text)
+    result = room.game.check_guess(player_id, guess_text)
     player_name = room.players.get(player_id, "???")
 
-    if correct:
+    if result == "correct":
         socketio.emit('chat_message', {
             "player_name": player_name,
             "text": guess_text,
             "correct": True
+        }, room=f"game_{room_code}")
+        emit_game_state(room_code)
+    elif result == "pending":
+        socketio.emit('chat_message', {
+            "player_name": player_name,
+            "text": guess_text,
+            "correct": False,
+            "pending": True,
+            "guesser_id": player_id
         }, room=f"game_{room_code}")
         emit_game_state(room_code)
     else:
@@ -443,6 +496,27 @@ def handle_guess(data):
             "text": guess_text,
             "correct": False
         }, room=f"game_{room_code}")
+
+
+@socketio.on('validate_guess')
+def handle_validate_guess(data):
+    room_code = data.get('room')
+    player_id = session.get('player_id')
+    guesser_id = data.get('guesser_id', '')
+    if not room_code or room_code not in rooms:
+        return
+    room = rooms[room_code]
+    if not room.game:
+        return
+    accepted = room.game.validate_guess(player_id, guesser_id)
+    if accepted:
+        guesser_name = room.players.get(guesser_id, "???")
+        socketio.emit('chat_message', {
+            "player_name": guesser_name,
+            "text": "",
+            "correct": True
+        }, room=f"game_{room_code}")
+    emit_game_state(room_code)
 
 
 @socketio.on('choose_word')

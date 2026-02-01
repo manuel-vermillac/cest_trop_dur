@@ -140,6 +140,14 @@
       .chat-msg .name { font-weight: 700; }
       .chat-msg.correct { color: #4caf50; font-weight: 700; }
       .chat-msg.system { color: #ffd700; font-style: italic; }
+      .chat-msg .validate-btn {
+        margin-left: 6px; padding: 2px 8px; border-radius: 4px; border: 1px solid #4caf50;
+        background: rgba(76,175,80,0.2); color: #4caf50; cursor: pointer; font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .chat-msg .validate-btn:hover { background: #4caf50; color: #fff; }
+      .chat-msg .validate-btn.validated { background: #4caf50; color: #fff; cursor: default; opacity: 0.7; }
+      .chat-msg .validation-status { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-left: 4px; }
       .chat-input-wrapper {
         display: flex;
         padding: 8px;
@@ -355,7 +363,7 @@
       });
 
       socket.on('chat_message', (data) => {
-        addChatMessage(data.player_name, data.text, data.correct);
+        addChatMessage(data.player_name, data.text, data.correct, data.pending, data.guesser_id);
       });
 
       // ==================== UI Update ====================
@@ -408,8 +416,8 @@
         if (amDrawer || amPicker || !isDrawingPhase) {
           chatInput.disabled = true;
           chatSend.disabled = true;
-          if (amDrawer) chatInput.placeholder = 'Vous dessinez...';
-          else if (amPicker) chatInput.placeholder = 'Vous connaissez le mot...';
+          if (amDrawer) chatInput.placeholder = 'Vous dessinez (validez les reponses)...';
+          else if (amPicker) chatInput.placeholder = 'Validez les reponses des joueurs...';
           else chatInput.placeholder = 'Tapez votre reponse...';
         } else {
           chatInput.disabled = false;
@@ -419,6 +427,27 @@
 
         // Scores
         updateScores(state);
+
+        // Update validation buttons based on pending_guesses state
+        if (state.pending_guesses && (amPicker || amDrawer)) {
+          document.querySelectorAll('.chat-msg[data-guesser-id]').forEach(msg => {
+            const gid = msg.dataset.guesserId;
+            const pg = state.pending_guesses[gid];
+            const btn = msg.querySelector('.validate-btn');
+            if (!btn) return;
+            if (!pg) {
+              // Guess no longer pending (accepted or cleared)
+              btn.remove();
+            } else {
+              const myApproval = amPicker ? pg.picker_approved : pg.drawer_approved;
+              if (myApproval) {
+                btn.classList.add('validated');
+                btn.textContent = 'Validé ✓';
+                btn.onclick = null;
+              }
+            }
+          });
+        }
 
         // Overlays
         hideAllOverlays();
@@ -622,7 +651,7 @@
         if (e.key === 'Enter') sendGuess();
       });
 
-      function addChatMessage(name, text, correct) {
+      function addChatMessage(name, text, correct, pending, guesserId) {
         const container = document.getElementById('chatMessages');
         const div = document.createElement('div');
         if (correct) {
@@ -631,9 +660,24 @@
         } else {
           div.className = 'chat-msg';
           div.innerHTML = `<span class="name">${name}:</span> ${text}`;
+          if (pending && guesserId && (amPicker || amDrawer)) {
+            div.dataset.guesserId = guesserId;
+            const btn = document.createElement('button');
+            btn.className = 'validate-btn';
+            btn.textContent = 'Valider ✓';
+            btn.onclick = () => validateGuess(guesserId, btn);
+            div.appendChild(btn);
+          }
         }
         container.appendChild(div);
         container.scrollTop = container.scrollHeight;
+      }
+
+      function validateGuess(guesserId, btn) {
+        socket.emit('validate_guess', { room: roomCode, guesser_id: guesserId });
+        btn.classList.add('validated');
+        btn.textContent = 'Validé ✓';
+        btn.onclick = null;
       }
 
       // ==================== Canvas Drawing ====================
