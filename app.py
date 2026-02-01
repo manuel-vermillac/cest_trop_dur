@@ -152,30 +152,35 @@ class Room:
 
 
 class Game:
+    DRAW_TIME = 40  # 40 secondes par phase de dessin
+
     def __init__(self, player_ids, player_names):
         self.player_ids = player_ids
         self.player_names = player_names
         self.num_players = len(player_ids)
         self.scores = {pid: 0 for pid in player_ids}
-        self.current_drawer_index = 0
+        self.current_picker_index = 0  # joueur1 qui pioche la carte
         self.current_word = None
         self.current_card = None
         self.round = 1
-        self.total_rounds = self.num_players  # Chaque joueur dessine une fois par tour complet
-        self.phase = "choosing"  # choosing, drawing, round_end, game_over
-        self.guessed_players = set()  # player_ids qui ont deviné
-        self.round_time = config.ROUND_TIME_SECONDS
+        self.total_rounds = self.num_players
+        # Phases: choosing, drawing_player2, drawing_player1, round_end, game_over
+        self.phase = "choosing"
+        self.guessed = False  # le mot a-t-il été deviné ?
         self.timer_end = None
         self.used_cards = set()
-        self.draw_data = []  # Historique des traits pour synchronisation
+        self.draw_data = []
+        self.designated_player_id = None  # joueur2 désigné
+        self.current_drawer_id = None  # qui dessine actuellement
+        self.point_winner_id = None  # qui a gagné le point ce tour
 
     @property
-    def current_drawer_id(self):
-        return self.player_ids[self.current_drawer_index]
+    def current_picker_id(self):
+        return self.player_ids[self.current_picker_index]
 
     @property
-    def current_drawer_name(self):
-        return self.player_names[self.current_drawer_index]
+    def current_picker_name(self):
+        return self.player_names[self.current_picker_index]
 
     def pick_card(self):
         available = [c for c in CARDS if c["carte"] not in self.used_cards]
@@ -186,46 +191,73 @@ class Game:
         self.used_cards.add(self.current_card["carte"])
         return self.current_card
 
-    def choose_word(self, word_index):
+    def get_designable_players(self):
+        """Retourne les joueurs que le picker peut désigner (tous sauf lui)."""
+        return [pid for pid in self.player_ids if pid != self.current_picker_id]
+
+    def choose_word_and_player(self, word_index, designated_id):
         if self.current_card is None:
             return False
         if word_index < 0 or word_index >= len(self.current_card["mots"]):
             return False
+        if designated_id not in self.player_ids or designated_id == self.current_picker_id:
+            return False
         self.current_word = self.current_card["mots"][word_index]
-        self.phase = "drawing"
-        self.timer_end = time.time() + self.round_time
-        self.guessed_players = set()
+        self.designated_player_id = designated_id
+        self.current_drawer_id = designated_id
+        self.phase = "drawing_player2"
+        self.timer_end = time.time() + self.DRAW_TIME
+        self.guessed = False
+        self.point_winner_id = None
         self.draw_data = []
         return True
 
     def check_guess(self, player_id, guess):
-        if self.phase != "drawing":
+        if self.phase not in ("drawing_player2", "drawing_player1"):
             return False
+        # Le dessinateur actuel et le picker ne peuvent pas deviner pendant leur phase
         if player_id == self.current_drawer_id:
             return False
-        if player_id in self.guessed_players:
+        # Le picker ne peut pas deviner non plus (il connaît le mot)
+        if player_id == self.current_picker_id:
             return False
         if guess.strip().lower() == self.current_word.strip().lower():
-            self.guessed_players.add(player_id)
-            # Points: le devineur gagne des points, le dessinateur aussi
-            guessers_count = len(self.guessed_players)
-            points_guesser = max(1, self.num_players - guessers_count)
-            self.scores[player_id] = self.scores.get(player_id, 0) + points_guesser
-            self.scores[self.current_drawer_id] = self.scores.get(self.current_drawer_id, 0) + 1
-            # Si tout le monde a deviné, fin du tour
-            non_drawer_count = self.num_players - 1
-            if len(self.guessed_players) >= non_drawer_count:
-                self.end_drawing()
+            self.guessed = True
+            # Attribuer 1 point au dessinateur actuel
+            if self.phase == "drawing_player2":
+                self.point_winner_id = self.designated_player_id
+                self.scores[self.designated_player_id] = self.scores.get(self.designated_player_id, 0) + 1
+            else:
+                self.point_winner_id = self.current_picker_id
+                self.scores[self.current_picker_id] = self.scores.get(self.current_picker_id, 0) + 1
+            self.end_drawing()
             return True
         return False
+
+    def timer_expired(self):
+        """Appelé quand le timer expire. Gère la transition de phase."""
+        if self.phase == "drawing_player2":
+            # Joueur2 n'a pas réussi, c'est au tour de joueur1
+            self.phase = "drawing_player1"
+            self.current_drawer_id = self.current_picker_id
+            self.timer_end = time.time() + self.DRAW_TIME
+            self.draw_data = []
+            return "switch_to_player1"
+        elif self.phase == "drawing_player1":
+            # Joueur1 n'a pas réussi non plus, joueur2 gagne 1 point
+            self.point_winner_id = self.designated_player_id
+            self.scores[self.designated_player_id] = self.scores.get(self.designated_player_id, 0) + 1
+            self.end_drawing()
+            return "player1_failed"
+        return None
 
     def end_drawing(self):
         self.phase = "round_end"
         self.timer_end = None
 
     def next_turn(self):
-        self.current_drawer_index = (self.current_drawer_index + 1) % self.num_players
-        if self.current_drawer_index == 0:
+        self.current_picker_index = (self.current_picker_index + 1) % self.num_players
+        if self.current_picker_index == 0:
             self.round += 1
         if self.round > self.total_rounds:
             self.phase = "game_over"
@@ -234,6 +266,9 @@ class Game:
         self.current_word = None
         self.current_card = None
         self.draw_data = []
+        self.designated_player_id = None
+        self.current_drawer_id = None
+        self.point_winner_id = None
         return True
 
     def is_time_up(self):
@@ -252,23 +287,37 @@ class Game:
         return " ".join("_" if c != " " else " " for c in self.current_word)
 
     def get_state(self, for_player_id=None):
+        player_names_dict = dict(zip(self.player_ids, self.player_names))
         state = {
             "phase": self.phase,
             "round": self.round,
             "total_rounds": self.total_rounds,
+            "current_picker_id": self.current_picker_id,
+            "current_picker_name": self.current_picker_name,
             "current_drawer_id": self.current_drawer_id,
-            "current_drawer_name": self.current_drawer_name,
+            "current_drawer_name": player_names_dict.get(self.current_drawer_id, ""),
+            "designated_player_id": self.designated_player_id,
+            "designated_player_name": player_names_dict.get(self.designated_player_id, ""),
             "scores": {pid: self.scores[pid] for pid in self.player_ids},
-            "player_names": dict(zip(self.player_ids, self.player_names)),
-            "guessed_players": list(self.guessed_players),
+            "player_names": player_names_dict,
+            "guessed": self.guessed,
             "remaining_time": self.get_remaining_time(),
             "num_players": self.num_players,
+            "point_winner_id": self.point_winner_id,
+            "point_winner_name": player_names_dict.get(self.point_winner_id, ""),
         }
-        # Le dessinateur voit le mot, les autres voient l'indice
-        if for_player_id == self.current_drawer_id:
+        # Le picker voit toujours le mot (il l'a choisi)
+        if for_player_id == self.current_picker_id:
             state["current_word"] = self.current_word
             if self.phase == "choosing" and self.current_card:
                 state["card_choices"] = self.current_card["mots"]
+                state["designable_players"] = [
+                    {"id": pid, "name": player_names_dict[pid]}
+                    for pid in self.get_designable_players()
+                ]
+        # Le dessinateur voit aussi le mot
+        elif for_player_id == self.current_drawer_id:
+            state["current_word"] = self.current_word
         else:
             state["word_hint"] = self.get_word_hint()
 
@@ -344,7 +393,7 @@ def handle_draw(data):
     if room_code not in rooms:
         return
     room = rooms[room_code]
-    if not room.game or room.game.phase != "drawing":
+    if not room.game or room.game.phase not in ("drawing_player2", "drawing_player1"):
         return
     if player_id != room.game.current_drawer_id:
         return
@@ -401,12 +450,13 @@ def handle_choose_word(data):
     room_code = data.get('room')
     player_id = session.get('player_id')
     word_index = data.get('index', -1)
+    designated_id = data.get('designated_id', '')
     if room_code not in rooms:
         return
     room = rooms[room_code]
-    if not room.game or player_id != room.game.current_drawer_id:
+    if not room.game or player_id != room.game.current_picker_id:
         return
-    if room.game.choose_word(word_index):
+    if room.game.choose_word_and_player(word_index, designated_id):
         emit_game_state(room_code)
 
 
@@ -434,10 +484,13 @@ def handle_timer_expired(data):
     if room_code not in rooms:
         return
     room = rooms[room_code]
-    if not room.game or room.game.phase != "drawing":
+    if not room.game or room.game.phase not in ("drawing_player2", "drawing_player1"):
         return
     if room.game.is_time_up():
-        room.game.end_drawing()
+        result = room.game.timer_expired()
+        if result == "switch_to_player1":
+            # Effacer le canvas pour le nouveau dessinateur
+            socketio.emit('clear_canvas', {}, room=f"game_{room_code}")
         emit_game_state(room_code)
 
 

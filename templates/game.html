@@ -193,6 +193,7 @@
         background: #ffd700; color: #1a1a2e; transform: translateY(-3px);
         box-shadow: 0 6px 20px rgba(255,215,0,0.4);
       }
+      #designateSection h2 { font-size: 1.2rem; }
       .overlay h2 { margin-bottom: 20px; color: #ffd700; font-size: 1.5rem; }
       .overlay p { margin: 10px 0; font-size: 1.1rem; }
       .overlay .btn-next {
@@ -259,21 +260,27 @@
           <button class="tool-btn" id="clearBtn">Effacer tout</button>
         </div>
 
-        <!-- Overlay: choosing word -->
+        <!-- Overlay: choosing word + designating player -->
         <div class="overlay hidden" id="choosingOverlay">
-          <h2>Choisissez un mot a dessiner</h2>
+          <h2>Choisissez un mot</h2>
           <div class="card-choices" id="cardChoices"></div>
+          <div id="designateSection" style="display:none; margin-top: 20px; text-align: center;">
+            <h2 style="margin-bottom: 10px;">Designez un joueur pour dessiner</h2>
+            <div class="card-choices" id="playerChoices"></div>
+          </div>
+          <button class="btn-next hidden" id="confirmChoiceBtn" onclick="confirmChoice()" style="margin-top:20px;">Valider</button>
         </div>
 
-        <!-- Overlay: waiting for drawer to choose -->
+        <!-- Overlay: waiting for picker to choose -->
         <div class="overlay hidden" id="waitingChooseOverlay">
-          <h2 id="waitingChooseText">Le dessinateur choisit un mot...</h2>
+          <h2 id="waitingChooseText">Un joueur choisit un mot...</h2>
         </div>
 
         <!-- Overlay: round end -->
         <div class="overlay hidden" id="roundEndOverlay">
           <h2>Fin du tour !</h2>
           <p>Le mot etait : <strong id="revealWord"></strong></p>
+          <p id="roundResultMsg" style="margin-top:10px;font-size:1.1rem;"></p>
           <button class="btn-next hidden" id="nextTurnBtn" onclick="requestNextTurn()">Tour suivant</button>
           <p class="waiting-message hidden" id="waitingNextMsg" style="color:rgba(255,255,255,0.6);font-style:italic;">
             En attente de l'hote...
@@ -323,8 +330,11 @@
       let isDrawing = false;
       let lastX = 0, lastY = 0;
       let amDrawer = false;
+      let amPicker = false;
       let gameState = null;
       let timerInterval = null;
+      let selectedWordIndex = null;
+      let selectedDesignatedId = null;
 
       // ==================== Socket ====================
       socket.on('connect', () => {
@@ -351,16 +361,28 @@
       // ==================== UI Update ====================
       function updateUI(state) {
         amDrawer = (state.current_drawer_id === myPlayerId);
+        amPicker = (state.current_picker_id === myPlayerId);
+        const isDrawingPhase = state.phase === 'drawing_player2' || state.phase === 'drawing_player1';
 
         // Header
         document.getElementById('roundInfo').textContent = `Tour ${state.round}/${state.total_rounds}`;
-        document.getElementById('drawerInfo').textContent = amDrawer
-          ? 'Vous dessinez !'
-          : `${state.current_drawer_name} dessine`;
+        if (isDrawingPhase) {
+          if (amDrawer) {
+            document.getElementById('drawerInfo').textContent = 'Vous dessinez !';
+          } else {
+            document.getElementById('drawerInfo').textContent = `${state.current_drawer_name} dessine`;
+          }
+        } else if (state.phase === 'choosing') {
+          document.getElementById('drawerInfo').textContent = amPicker
+            ? 'Vous choisissez un mot'
+            : `${state.current_picker_name} choisit un mot`;
+        } else {
+          document.getElementById('drawerInfo').textContent = '';
+        }
 
         // Word display
         const wordDisplay = document.getElementById('wordDisplay');
-        if (amDrawer && state.current_word) {
+        if ((amDrawer || amPicker) && state.current_word) {
           wordDisplay.textContent = state.current_word;
         } else if (state.word_hint) {
           wordDisplay.textContent = state.word_hint;
@@ -374,21 +396,20 @@
         updateTimer(state.remaining_time);
 
         // Tools visibility
-        document.getElementById('drawTools').style.display = (amDrawer && state.phase === 'drawing') ? 'flex' : 'none';
+        document.getElementById('drawTools').style.display = (amDrawer && isDrawingPhase) ? 'flex' : 'none';
 
         // Canvas cursor
-        canvas.style.cursor = (amDrawer && state.phase === 'drawing') ? 'crosshair' : 'default';
-        canvas.style.pointerEvents = (amDrawer && state.phase === 'drawing') ? 'auto' : 'none';
+        canvas.style.cursor = (amDrawer && isDrawingPhase) ? 'crosshair' : 'default';
+        canvas.style.pointerEvents = (amDrawer && isDrawingPhase) ? 'auto' : 'none';
 
-        // Chat input - le dessinateur ne peut pas deviner
+        // Chat input - le dessinateur et le picker ne peuvent pas deviner
         const chatInput = document.getElementById('chatInput');
         const chatSend = document.getElementById('chatSend');
-        const hasGuessed = state.guessed_players && state.guessed_players.includes(myPlayerId);
-        if (amDrawer || state.phase !== 'drawing' || hasGuessed) {
+        if (amDrawer || amPicker || !isDrawingPhase) {
           chatInput.disabled = true;
           chatSend.disabled = true;
           if (amDrawer) chatInput.placeholder = 'Vous dessinez...';
-          else if (hasGuessed) chatInput.placeholder = 'Vous avez devine !';
+          else if (amPicker) chatInput.placeholder = 'Vous connaissez le mot...';
           else chatInput.placeholder = 'Tapez votre reponse...';
         } else {
           chatInput.disabled = false;
@@ -404,13 +425,13 @@
 
         if (state.phase === 'choosing') {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          if (amDrawer && state.card_choices) {
-            showChoosingOverlay(state.card_choices);
+          if (amPicker && state.card_choices) {
+            showChoosingOverlay(state.card_choices, state.designable_players);
           } else {
-            showWaitingChooseOverlay(state.current_drawer_name);
+            showWaitingChooseOverlay(state.current_picker_name);
           }
         } else if (state.phase === 'round_end') {
-          showRoundEndOverlay(state.current_word);
+          showRoundEndOverlay(state.current_word, state);
         } else if (state.phase === 'game_over') {
           showGameOverOverlay(state);
         }
@@ -445,21 +466,23 @@
 
       function updateScores(state) {
         const panel = document.getElementById('scoresPanel');
+        const isDrawingPhase = state.phase === 'drawing_player2' || state.phase === 'drawing_player1';
         const sorted = Object.entries(state.scores)
           .map(([pid, score]) => ({
             pid, score,
             name: state.player_names[pid] || '???',
-            isDrawer: pid === state.current_drawer_id,
-            hasGuessed: state.guessed_players && state.guessed_players.includes(pid)
+            isDrawer: pid === state.current_drawer_id && isDrawingPhase,
+            isPicker: pid === state.current_picker_id
           }))
           .sort((a, b) => b.score - a.score);
 
         panel.innerHTML = '<h3>Scores</h3>' + sorted.map(p => {
           let cls = '';
-          if (p.isDrawer) cls = 'drawing';
-          else if (p.hasGuessed) cls = 'guessed';
+          let tag = '';
+          if (p.isDrawer) { cls = 'drawing'; tag = '(dessine)'; }
+          else if (p.isPicker && isDrawingPhase) { tag = '(pioche)'; }
           return `<div class="score-item ${cls}">
-            <span>${p.name} ${p.isDrawer ? '(dessine)' : ''} ${p.hasGuessed ? '(devine)' : ''}</span>
+            <span>${p.name} ${tag}</span>
             <span class="score-points">${p.score} pts</span>
           </div>`;
         }).join('');
@@ -470,25 +493,92 @@
         document.querySelectorAll('.overlay').forEach(o => o.classList.add('hidden'));
       }
 
-      function showChoosingOverlay(choices) {
+      function showChoosingOverlay(choices, designablePlayers) {
+        selectedWordIndex = null;
+        selectedDesignatedId = null;
         const overlay = document.getElementById('choosingOverlay');
         overlay.classList.remove('hidden');
+
         const container = document.getElementById('cardChoices');
         container.innerHTML = choices.map((word, i) =>
-          `<div class="card-choice" onclick="chooseWord(${i})">${word}</div>`
+          `<div class="card-choice" data-word-index="${i}" onclick="selectWord(this, ${i})">${word}</div>`
         ).join('');
+
+        const designateSection = document.getElementById('designateSection');
+        const playerContainer = document.getElementById('playerChoices');
+        if (designablePlayers && designablePlayers.length > 0) {
+          playerContainer.innerHTML = designablePlayers.map(p =>
+            `<div class="card-choice" data-player-id="${p.id}" onclick="selectPlayer(this, '${p.id}')">${p.name}</div>`
+          ).join('');
+        }
+        designateSection.style.display = 'none';
+        document.getElementById('confirmChoiceBtn').classList.add('hidden');
       }
 
-      function showWaitingChooseOverlay(drawerName) {
+      function selectWord(el, index) {
+        selectedWordIndex = index;
+        document.querySelectorAll('#cardChoices .card-choice').forEach(c => {
+          c.style.background = 'rgba(255,215,0,0.15)';
+          c.style.color = '#ffd700';
+        });
+        el.style.background = '#ffd700';
+        el.style.color = '#1a1a2e';
+        document.getElementById('designateSection').style.display = 'block';
+        updateConfirmBtn();
+      }
+
+      function selectPlayer(el, playerId) {
+        selectedDesignatedId = playerId;
+        document.querySelectorAll('#playerChoices .card-choice').forEach(c => {
+          c.style.background = 'rgba(255,215,0,0.15)';
+          c.style.color = '#ffd700';
+        });
+        el.style.background = '#ffd700';
+        el.style.color = '#1a1a2e';
+        updateConfirmBtn();
+      }
+
+      function updateConfirmBtn() {
+        const btn = document.getElementById('confirmChoiceBtn');
+        if (selectedWordIndex !== null && selectedDesignatedId !== null) {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
+      }
+
+      function confirmChoice() {
+        if (selectedWordIndex !== null && selectedDesignatedId !== null) {
+          socket.emit('choose_word', {
+            room: roomCode,
+            index: selectedWordIndex,
+            designated_id: selectedDesignatedId
+          });
+        }
+      }
+
+      function showWaitingChooseOverlay(pickerName) {
         const overlay = document.getElementById('waitingChooseOverlay');
         overlay.classList.remove('hidden');
-        document.getElementById('waitingChooseText').textContent = `${drawerName} choisit un mot...`;
+        document.getElementById('waitingChooseText').textContent = `${pickerName} choisit un mot et designe un joueur...`;
       }
 
-      function showRoundEndOverlay(word) {
+      function showRoundEndOverlay(word, state) {
         const overlay = document.getElementById('roundEndOverlay');
         overlay.classList.remove('hidden');
         document.getElementById('revealWord').textContent = word || '???';
+        // Show who won the point
+        const msg = document.getElementById('roundResultMsg');
+        if (state.point_winner_name) {
+          if (state.guessed) {
+            msg.textContent = `${state.point_winner_name} a fait deviner le mot et gagne 1 point !`;
+          } else {
+            msg.textContent = `Personne n'a devine ! ${state.point_winner_name} gagne 1 point.`;
+          }
+          msg.style.color = '#4caf50';
+        } else {
+          msg.textContent = '';
+        }
         if (isHost) {
           document.getElementById('nextTurnBtn').classList.remove('hidden');
           document.getElementById('waitingNextMsg').classList.add('hidden');
@@ -514,9 +604,7 @@
       }
 
       // ==================== Actions ====================
-      function chooseWord(index) {
-        socket.emit('choose_word', { room: roomCode, index: index });
-      }
+      // chooseWord is now handled by confirmChoice()
 
       function requestNextTurn() {
         socket.emit('request_next_turn', { room: roomCode });
