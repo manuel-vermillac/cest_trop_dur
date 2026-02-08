@@ -1,0 +1,736 @@
+14:34:07 [SYNC] envoi de 0 events a player=AWIW
+14:34:07 [SYNC] envoi de 0 events a player=K7HR
+14:34:07 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:07 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:08 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:08 [DRAW] OK: enregistre, total=1, broadcast vers game_V6XT
+14:34:08 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=2, broadcast vers game_V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=6, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=5, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=4, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=3, broadcast vers game_V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=7, broadcast vers game_V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=10, broadcast vers game_V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=9, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=8, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=12, broadcast vers game_V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=11, broadcast vers game_V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:09 [DRAW] OK: enregistre, total=14, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=13, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=15, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=16, broadcast vers game_V6XT
+14:34:09 [DRAW] OK: enregistre, total=17, broadcast vers game_V6XT
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [SYNC] envoi de 17 events a player=K7HR
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:09 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:10 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:10 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:10 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:10 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:10 [SYNC] envoi de 17 events a player=AWIW
+14:34:10 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:10 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=17 local=17
+14:34:10 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=17 local=17
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] OK: enregistre, total=18, broadcast vers game_V6XT
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] OK: enregistre, total=19, broadcast vers game_V6XT
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:11 [DRAW] OK: enregistre, total=20, broadcast vers game_V6XT
+14:34:11 [DRAW] OK: enregistre, total=21, broadcast vers game_V6XT
+14:34:11 [DRAW] OK: enregistre, total=22, broadcast vers game_V6XT
+14:34:11 [DRAW] OK: enregistre, total=23, broadcast vers game_V6XT
+14:34:11 [DRAW] OK: enregistre, total=24, broadcast vers game_V6XT
+14:34:11 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:11 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:12 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:12 [SYNC] envoi de 24 events a player=AWIW
+14:34:12 [SYNC] envoi de 24 events a player=K7HR
+14:34:13 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=24 local=24
+14:34:13 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=24 local=24
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] OK: enregistre, total=25, broadcast vers game_V6XT
+14:34:13 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:13 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] OK: enregistre, total=26, broadcast vers game_V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] OK: enregistre, total=28, broadcast vers game_V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] OK: enregistre, total=27, broadcast vers game_V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] OK: enregistre, total=30, broadcast vers game_V6XT
+14:34:13 [DRAW] OK: enregistre, total=31, broadcast vers game_V6XT
+14:34:13 [DRAW] OK: enregistre, total=29, broadcast vers game_V6XT
+14:34:13 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:13 [DRAW] OK: enregistre, total=32, broadcast vers game_V6XT
+14:34:13 [DRAW] OK: enregistre, total=33, broadcast vers game_V6XT
+14:34:13 [DRAW] OK: enregistre, total=34, broadcast vers game_V6XT
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=35, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=36, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=37, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=38, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=40, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=41, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=39, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=42, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=44, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=43, broadcast vers game_V6XT
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=45, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=46, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=47, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=48, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=50, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=49, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=51, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=52, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=53, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=54, broadcast vers game_V6XT
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=56, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=55, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=59, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=58, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=57, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=60, broadcast vers game_V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:14 [DRAW] OK: enregistre, total=61, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=62, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=63, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=64, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=66, broadcast vers game_V6XT
+14:34:14 [DRAW] OK: enregistre, total=65, broadcast vers game_V6XT
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=67, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=70, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=71, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=68, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=72, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=69, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=73, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=74, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=75, broadcast vers game_V6XT
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [DRAW] OK: enregistre, total=77, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=76, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=78, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=80, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=79, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=82, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=83, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=81, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=84, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=85, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=87, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=86, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=88, broadcast vers game_V6XT
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=89, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=90, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=91, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=92, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=95, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=93, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=94, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=96, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=97, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=98, broadcast vers game_V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:15 [DRAW] OK: enregistre, total=99, broadcast vers game_V6XT
+14:34:15 [DRAW] OK: enregistre, total=100, broadcast vers game_V6XT
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [SYNC] envoi de 100 events a player=AWIW
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [SYNC] envoi de 100 events a player=K7HR
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=101, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=102, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=103, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=104, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=108, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=107, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=106, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=109, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=105, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=111, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=112, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=110, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=113, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=114, broadcast vers game_V6XT
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=100 local=100
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=115, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=116, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=117, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=118, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=119, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=121, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=120, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=122, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=123, broadcast vers game_V6XT
+14:34:16 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=100 local=100
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:16 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=124, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=125, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=127, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=126, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=129, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=128, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=130, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=131, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=132, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=134, broadcast vers game_V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:16 [DRAW] OK: enregistre, total=133, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=135, broadcast vers game_V6XT
+14:34:16 [DRAW] OK: enregistre, total=136, broadcast vers game_V6XT
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] OK: enregistre, total=137, broadcast vers game_V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] OK: enregistre, total=138, broadcast vers game_V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] OK: enregistre, total=139, broadcast vers game_V6XT
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] OK: enregistre, total=143, broadcast vers game_V6XT
+14:34:17 [DRAW] OK: enregistre, total=141, broadcast vers game_V6XT
+14:34:17 [DRAW] OK: enregistre, total=145, broadcast vers game_V6XT
+14:34:17 [DRAW] OK: enregistre, total=142, broadcast vers game_V6XT
+14:34:17 [DRAW] OK: enregistre, total=140, broadcast vers game_V6XT
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:17 [DRAW] OK: enregistre, total=146, broadcast vers game_V6XT
+14:34:17 [DRAW] OK: enregistre, total=144, broadcast vers game_V6XT
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:17 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] OK: enregistre, total=148, broadcast vers game_V6XT
+14:34:18 [DRAW] OK: enregistre, total=147, broadcast vers game_V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] OK: enregistre, total=149, broadcast vers game_V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] OK: enregistre, total=150, broadcast vers game_V6XT
+14:34:18 [DRAW] OK: enregistre, total=151, broadcast vers game_V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] OK: enregistre, total=153, broadcast vers game_V6XT
+14:34:18 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] recu de player_id=4MUJ, room=V6XT
+14:34:18 [DRAW] OK: enregistre, total=155, broadcast vers game_V6XT
+14:34:18 [DRAW] OK: enregistre, total=156, broadcast vers game_V6XT
+14:34:18 [DRAW] OK: enregistre, total=152, broadcast vers game_V6XT
+14:34:18 [DRAW] OK: enregistre, total=157, broadcast vers game_V6XT
+14:34:18 [DRAW] OK: enregistre, total=154, broadcast vers game_V6XT
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:18 [CLIENT K7HR] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [CLIENT AWIW] DRAW_EVENT recu, amDrawer=false
+14:34:19 [SYNC] envoi de 157 events a player=AWIW
+14:34:19 [SYNC] envoi de 157 events a player=K7HR
+14:34:19 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:19 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:21 [SYNC] envoi de 157 events a player=K7HR
+14:34:21 [SYNC] envoi de 157 events a player=AWIW
+14:34:22 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:22 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:25 [SYNC] envoi de 157 events a player=K7HR
+14:34:25 [SYNC] envoi de 157 events a player=AWIW
+14:34:25 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:25 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:28 [SYNC] envoi de 157 events a player=K7HR
+14:34:28 [SYNC] envoi de 157 events a player=AWIW
+14:34:28 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:28 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:31 [SYNC] envoi de 157 events a player=K7HR
+14:34:31 [SYNC] envoi de 157 events a player=AWIW
+14:34:31 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:31 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:34 [SYNC] envoi de 157 events a player=K7HR
+14:34:34 [SYNC] envoi de 157 events a player=AWIW
+14:34:34 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:34 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:37 [SYNC] envoi de 157 events a player=K7HR
+14:34:37 [SYNC] envoi de 157 events a player=AWIW
+14:34:37 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:37 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:40 [SYNC] envoi de 157 events a player=K7HR
+14:34:40 [SYNC] envoi de 157 events a player=AWIW
+14:34:40 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:40 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:42 [SYNC] envoi de 157 events a player=K7HR
+14:34:42 [SYNC] envoi de 157 events a player=AWIW
+14:34:43 [CLIENT K7HR] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:43 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=157 local=157
+14:34:45 [SYNC] envoi de 157 events a player=K7HR
+14:34:46 [SYNC] envoi de 0 events a player=4MUJ
+14:34:46 [SYNC] envoi de 0 events a player=AWIW
+14:34:46 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:46 [CLIENT K7HR] SYNC recu, amDrawer=true serveur=0 local=0
+14:34:46 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:48 [SYNC] envoi de 0 events a player=4MUJ
+14:34:49 [SYNC] envoi de 0 events a player=AWIW
+14:34:49 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:49 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:52 [SYNC] envoi de 0 events a player=4MUJ
+14:34:52 [SYNC] envoi de 0 events a player=AWIW
+14:34:52 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:52 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:55 [SYNC] envoi de 0 events a player=4MUJ
+14:34:55 [SYNC] envoi de 0 events a player=AWIW
+14:34:55 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:55 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:58 [SYNC] envoi de 0 events a player=4MUJ
+14:34:58 [SYNC] envoi de 0 events a player=AWIW
+14:34:58 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:34:58 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:01 [SYNC] envoi de 0 events a player=4MUJ
+14:35:01 [SYNC] envoi de 0 events a player=AWIW
+14:35:01 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:01 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:04 [SYNC] envoi de 0 events a player=4MUJ
+14:35:04 [SYNC] envoi de 0 events a player=AWIW
+14:35:04 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:04 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:07 [SYNC] envoi de 0 events a player=4MUJ
+14:35:07 [SYNC] envoi de 0 events a player=AWIW
+14:35:07 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:07 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:10 [SYNC] envoi de 0 events a player=4MUJ
+14:35:10 [SYNC] envoi de 0 events a player=AWIW
+14:35:10 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:10 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:12 [SYNC] envoi de 0 events a player=4MUJ
+14:35:12 [SYNC] envoi de 0 events a player=AWIW
+14:35:13 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:13 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:16 [SYNC] envoi de 0 events a player=4MUJ
+14:35:16 [SYNC] envoi de 0 events a player=AWIW
+14:35:16 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:16 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:18 [SYNC] envoi de 0 events a player=4MUJ
+14:35:18 [SYNC] envoi de 0 events a player=AWIW
+14:35:19 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:19 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:21 [SYNC] envoi de 0 events a player=4MUJ
+14:35:22 [SYNC] envoi de 0 events a player=AWIW
+14:35:22 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:22 [CLIENT AWIW] SYNC recu, amDrawer=false serveur=0 local=0
+14:35:24 [SYNC] envoi de 0 events a player=4MUJ
+14:35:25 [CLIENT 4MUJ] SYNC recu, amDrawer=false serveur=0 local=0

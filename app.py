@@ -15,6 +15,12 @@ import time
 import traceback
 from datetime import datetime, timedelta
 
+DEBUG_LOG = os.path.join(os.path.dirname(__file__), 'debug_draw.log')
+
+def dlog(msg):
+    with open(DEBUG_LOG, 'a') as f:
+        f.write(f"{datetime.now().strftime('%H:%M:%S')} {msg}\n")
+
 load_dotenv()
 from config import config
 
@@ -68,6 +74,35 @@ def cleanup_old_rooms():
 
 cleanup_thread = threading.Thread(target=cleanup_old_rooms, daemon=True)
 cleanup_thread.start()
+
+
+def check_timers():
+    """Thread serveur qui vérifie les timers et force les transitions si le client ne l'a pas fait."""
+    while True:
+        time.sleep(2)
+        try:
+            for room_code, room in list(rooms.items()):
+                if not room.game or room.game.phase not in ("drawing_player2", "drawing_player1"):
+                    continue
+                if room.game.timer_end and time.time() >= room.game.timer_end + 2:
+                    result = room.game.timer_expired()
+                    if result == "switch_to_player1":
+                        socketio.emit('clear_canvas', {}, room=f"game_{room_code}")
+                        picker_name = room.game.current_picker_name
+                        socketio.emit('chat_message', {
+                            'player_name': '',
+                            'text': f"Temps ecoulé ! {picker_name} prend le relais pour dessiner !",
+                            'correct': False,
+                            'pending': False,
+                            'system': True
+                        }, room=f"game_{room_code}")
+                    emit_game_state(room_code)
+        except Exception as e:
+            logger.error(f"Erreur check_timers: {e}")
+
+
+timer_thread = threading.Thread(target=check_timers, daemon=True)
+timer_thread.start()
 
 
 @app.errorhandler(Exception)
@@ -304,7 +339,7 @@ class Game:
         return True
 
     def is_time_up(self):
-        if self.timer_end and time.time() >= self.timer_end:
+        if self.timer_end and time.time() >= self.timer_end - 2:
             return True
         return False
 
@@ -337,6 +372,7 @@ class Game:
             "num_players": self.num_players,
             "point_winner_id": self.point_winner_id,
             "point_winner_name": player_names_dict.get(self.point_winner_id, ""),
+            "draw_data": self.draw_data,
         }
         # Le picker voit toujours le mot (il l'a choisi)
         if for_player_id == self.current_picker_id:
@@ -434,17 +470,44 @@ def handle_join_game(data):
 def handle_draw(data):
     room_code = data.get('room')
     player_id = session.get('player_id')
+    dlog(f"[DRAW] recu de player_id={player_id}, room={room_code}")
     if room_code not in rooms:
+        dlog(f"[DRAW] REJET: room {room_code} inexistante")
         return
     room = rooms[room_code]
     if not room.game or room.game.phase not in ("drawing_player2", "drawing_player1"):
+        dlog(f"[DRAW] REJET: phase={room.game.phase if room.game else 'no game'}")
         return
     if player_id != room.game.current_drawer_id:
+        dlog(f"[DRAW] REJET: player_id={player_id} != drawer={room.game.current_drawer_id}")
         return
     draw_event = data.get('draw_event')
     if draw_event:
         room.game.draw_data.append(draw_event)
+        dlog(f"[DRAW] OK: enregistre, total={len(room.game.draw_data)}, broadcast vers game_{room_code}")
         emit('draw_event', draw_event, room=f"game_{room_code}", include_self=False)
+
+
+@socketio.on('request_draw_data')
+def handle_request_draw_data(data):
+    room_code = data.get('room')
+    player_id = session.get('player_id')
+    if room_code not in rooms:
+        dlog(f"[SYNC] REJET: room {room_code} inexistante")
+        return
+    room = rooms[room_code]
+    if not room.game:
+        dlog(f"[SYNC] REJET: pas de game")
+        return
+    dlog(f"[SYNC] envoi de {len(room.game.draw_data)} events a player={player_id}")
+    emit('draw_data_sync', {'draw_data': room.game.draw_data})
+
+
+@socketio.on('client_log')
+def handle_client_log(data):
+    player_id = session.get('player_id')
+    msg = data.get('msg', '')
+    dlog(f"[CLIENT {player_id}] {msg}")
 
 
 @socketio.on('clear_canvas')
@@ -565,6 +628,15 @@ def handle_timer_expired(data):
         if result == "switch_to_player1":
             # Effacer le canvas pour le nouveau dessinateur
             socketio.emit('clear_canvas', {}, room=f"game_{room_code}")
+            # Notifier tout le monde que le picker prend le relais
+            picker_name = room.game.current_picker_name
+            socketio.emit('chat_message', {
+                'player_name': '',
+                'text': f"Temps ecoulé ! {picker_name} prend le relais pour dessiner !",
+                'correct': False,
+                'pending': False,
+                'system': True
+            }, room=f"game_{room_code}")
         emit_game_state(room_code)
 
 

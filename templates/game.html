@@ -328,7 +328,7 @@
       const myPlayerId = '{{ player_id }}';
       const isHost = {{ 'true' if player_id == room.host_player_id else 'false' }};
 
-      const socket = io({ transports: ['polling'] });
+      const socket = io({ transports: ['websocket', 'polling'] });
       const canvas = document.getElementById('drawCanvas');
       const ctx = canvas.getContext('2d');
 
@@ -354,16 +354,44 @@
         updateUI(state);
       });
 
+      // Hybride: draw events temps réel + polling toutes les 3s comme filet de sécurité
+      let drawSyncInterval = null;
+      let lastDrawCount = 0;
+
+      function clog(msg) {
+        socket.emit('client_log', { msg: msg });
+      }
+
+      // Temps réel: chaque trait arrive individuellement
       socket.on('draw_event', (data) => {
+        clog('DRAW_EVENT recu, amDrawer=' + amDrawer);
+        if (amDrawer) return;
         drawLine(data.x1, data.y1, data.x2, data.y2, data.color, data.size);
+        lastDrawCount++;
+      });
+
+      // Filet de sécurité: resync complète toutes les 3s si le client a MOINS de traits que le serveur
+      socket.on('draw_data_sync', (data) => {
+        const drawData = data.draw_data || [];
+        clog('SYNC recu, amDrawer=' + amDrawer + ' serveur=' + drawData.length + ' local=' + lastDrawCount);
+        if (amDrawer) return;
+        if (drawData.length > lastDrawCount) {
+          clog('SYNC REDESSIN de ' + drawData.length + ' traits (manquait ' + (drawData.length - lastDrawCount) + ')');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          for (const d of drawData) {
+            drawLine(d.x1, d.y1, d.x2, d.y2, d.color, d.size);
+          }
+          lastDrawCount = drawData.length;
+        }
       });
 
       socket.on('clear_canvas', () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        lastDrawCount = 0;
       });
 
       socket.on('chat_message', (data) => {
-        addChatMessage(data.player_name, data.text, data.correct, data.pending, data.guesser_id);
+        addChatMessage(data.player_name, data.text, data.correct, data.pending, data.guesser_id, data.system);
       });
 
       // ==================== UI Update ====================
@@ -398,6 +426,26 @@
           wordDisplay.textContent = state.current_word;
         } else {
           wordDisplay.textContent = '';
+        }
+
+        // Polling du dessin toutes les 3s pour les non-dessinateurs
+        if (!amDrawer && isDrawingPhase) {
+          if (!drawSyncInterval) {
+            lastDrawCount = 0;
+            socket.emit('request_draw_data', { room: roomCode });
+            drawSyncInterval = setInterval(() => {
+              socket.emit('request_draw_data', { room: roomCode });
+            }, 3000);
+          }
+        } else {
+          if (drawSyncInterval) {
+            clearInterval(drawSyncInterval);
+            drawSyncInterval = null;
+          }
+          if (state.phase === 'choosing') {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            lastDrawCount = 0;
+          }
         }
 
         // Timer
@@ -453,7 +501,6 @@
         hideAllOverlays();
 
         if (state.phase === 'choosing') {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
           if (amPicker && state.card_choices) {
             showChoosingOverlay(state.card_choices, state.designable_players);
           } else {
@@ -651,10 +698,13 @@
         if (e.key === 'Enter') sendGuess();
       });
 
-      function addChatMessage(name, text, correct, pending, guesserId) {
+      function addChatMessage(name, text, correct, pending, guesserId, system) {
         const container = document.getElementById('chatMessages');
         const div = document.createElement('div');
-        if (correct) {
+        if (system) {
+          div.className = 'chat-msg system';
+          div.textContent = text;
+        } else if (correct) {
           div.className = 'chat-msg correct';
           div.textContent = `${name} a devine le mot !`;
         } else {

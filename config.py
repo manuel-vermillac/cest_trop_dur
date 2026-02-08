@@ -21,7 +21,7 @@ class Config:
     ROOM_CLEANUP_INTERVAL = 300
     ROOM_MAX_AGE_HOURS = 2
     MAX_PLAYERS = 6
-    MIN_PLAYERS = 2
+    MIN_PLAYERS = 3
     ROUND_TIME_SECONDS = 80
     LOG_LEVEL = "INFO"
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
