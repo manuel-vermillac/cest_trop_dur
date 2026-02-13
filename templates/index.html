@@ -1,133 +1,95 @@
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>C'est Trop Dur - Pictionary</title>
-    <style>
-      html, body { height: 100%; margin: 0; padding: 0; }
-      body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
-      .container {
-        flex: 1;
-        padding: 40px 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      .content-box {
-        max-width: 800px;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 40px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      h1 {
-        text-align: center;
-        font-size: 2.5rem;
-        margin: 0 0 10px 0;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-      }
-      .subtitle {
-        text-align: center;
-        font-size: 1.1rem;
-        opacity: 0.8;
-        margin-bottom: 30px;
-      }
-      .rules {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-      }
-      .rules h2 {
-        margin-top: 0;
-        font-size: 1.3rem;
-        color: #ffd700;
-      }
-      .rules ul {
-        margin: 10px 0 0 0;
-        padding-left: 25px;
-      }
-      .rules li {
-        margin: 8px 0;
-        line-height: 1.5;
-      }
-      .actions {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-top: 20px;
-      }
-      .btn {
-        display: block;
-        padding: 18px 30px;
-        text-align: center;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 1.1rem;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-      }
-      .btn-primary {
-        background: #ffd700;
-        color: #1a1a2e;
-        border-color: #ffd700;
-      }
-      .btn-primary:hover {
-        background: #ffed4a;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-      }
-      .btn-secondary {
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
-        border-color: rgba(255, 255, 255, 0.3);
-      }
-      .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: translateY(-3px);
-        border-color: #fff;
-      }
-      @media (max-width: 600px) {
-        .content-box { padding: 25px; }
-        h1 { font-size: 2rem; }
-        .actions { grid-template-columns: 1fr; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="content-box">
-        <h1>C'est Trop Dur</h1>
-        <p class="subtitle">Le Pictionary entre amis - 2 a 6 joueurs</p>
+{% extends "base.html" %}
 
-        <div class="rules">
-          <h2>Comment jouer ?</h2>
-          <ul>
-            <li>Un joueur dessine, les autres devinent en tapant leur reponse</li>
-            <li>Le dessinateur choisit un mot parmi 3 propositions sur une carte</li>
-            <li>Plus vous devinez vite, plus vous gagnez de points !</li>
-            <li>Chaque joueur dessine a tour de role</li>
-          </ul>
-        </div>
+{% block title %}C'est Trop Dur - Pictionary{% endblock %}
 
-        <div class="actions">
-          <a href="/create" class="btn btn-primary">Creer une partie</a>
-          <a href="/join" class="btn btn-secondary">Rejoindre une partie</a>
-        </div>
-      </div>
+{% block body %}
+<div class="page-container">
+  <div class="page-card glass-card animate-fade-in">
+    <h1 class="game-title">C'est Trop Dur</h1>
+    <p class="game-subtitle">Le Pictionary entre amis - 3 a 6 joueurs</p>
+
+    <div class="rules-box">
+      <h2 class="rules-title">Comment jouer ?</h2>
+      <ul class="rules-list">
+        <li>Un joueur pioche une carte avec 3 mots et designe un dessinateur</li>
+        <li>Le dessinateur dessine, les autres devinent en tapant leur reponse</li>
+        <li>Si personne ne devine, le joueur qui a pioche prend le relais</li>
+        <li>Celui qui fait deviner gagne le point !</li>
+      </ul>
     </div>
-  </body>
-</html>
+
+    <div class="actions-grid">
+      <a href="/create" class="btn btn-primary btn-block">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Creer une partie
+      </a>
+      <a href="/join" class="btn btn-secondary btn-block">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Rejoindre une partie
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  body { overflow-y: auto; }
+
+  .rules-box {
+    background: rgba(212, 165, 116, 0.06);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .rules-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--accent-gold);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .rules-list {
+    list-style: none;
+    padding: 0;
+  }
+  .rules-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .rules-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+    opacity: 0.6;
+  }
+
+  .actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .btn-block {
+    width: 100%;
+    padding: 16px 20px;
+  }
+
+  @media (max-width: 500px) {
+    .actions-grid { grid-template-columns: 1fr; }
+    .game-title { font-size: 2.5rem; }
+  }
+</style>
+{% endblock %}

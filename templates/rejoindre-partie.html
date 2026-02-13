@@ -1,0 +1,108 @@
+{% extends "base_claude.html" %}
+
+{% block title %}Rejoindre une partie - C'est trop dur!{% endblock %}
+
+{% block extra_css %}
+<style>
+    .join-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-2xl);
+    }
+
+    .join-card {
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .actions-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        position: relative;
+        z-index: 1;
+    }
+
+    .actions-container .btn {
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .join-container {
+            padding: var(--space-lg);
+        }
+
+        .join-card {
+            padding: var(--space-2xl);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="join-container">
+    <div class="join-card glass-card">
+        <h1 class="game-title">C'est trop dur !</h1>
+        <h2 class="page-title">Rejoindre une partie</h2>
+
+        <div class="info-box">
+            <p class="info-text">
+                Entrez le code de partie pour rejoindre vos amis.
+            </p>
+        </div>
+
+        {% if error %}
+        <div class="error-box">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/join">
+            <div class="form-group">
+                <label class="form-label" for="gameCode">Code de la partie</label>
+                <input
+                    type="text"
+                    id="gameCode"
+                    name="code"
+                    class="form-input code-input"
+                    placeholder="AB12"
+                    maxlength="4"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="playerName">Votre nom</label>
+                <input
+                    type="text"
+                    id="playerName"
+                    name="player_name"
+                    class="form-input"
+                    placeholder="Entrez votre nom"
+                    maxlength="20"
+                    required
+                >
+            </div>
+
+            <div class="actions-container">
+                <button type="submit" class="btn btn-primary">
+                    Rejoindre
+                </button>
+                <a href="/" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('gameCode').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base_claude.html" %}
+
+{% block title %}Salon d'attente - C'est trop dur!{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lobby_claude.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="lobby-container">
+    <div class="lobby-card glass-card">
+        <h1 class="game-title">C'est trop dur !</h1>
+        <h2 class="page-title">Salon d'attente</h2>
+
+        <!-- Code de partie -->
+        <div class="code-box">
+            <div class="code-label">Code de la partie</div>
+            <div class="game-code">{{ room.code }}</div>
+        </div>
+
+        <!-- Partage -->
+        <div class="share-box">
+            <p class="share-text">Partagez ce code avec vos amis pour qu'ils rejoignent</p>
+            <div class="share-url">
+                <span class="share-url-text">{{ request.host_url }}join</span>
+            </div>
+        </div>
+
+        <!-- Audio controls -->
+        <div class="audio-controls">
+            <button id="voiceBtn" class="audio-btn" onclick="toggleVoice()">Activer le micro</button>
+            <span id="voiceStatus" class="audio-btn" style="cursor:default;">Chat vocal desactive</span>
+        </div>
+
+        <!-- Joueurs connectes -->
+        <div class="players-section">
+            <div class="players-header">
+                <h2 class="players-title">Joueurs connectes</h2>
+                <div class="players-count"><span id="currentPlayers">{{ room.players|length }}</span> / {{ room.max_players }} joueurs</div>
+            </div>
+
+            <div class="players-list" id="playersList">
+                {% for pid, pname in room.players.items() %}
+                <div class="player-item">
+                    <div class="player-avatar">
+                        <div class="player-avatar-initial" style="background:#e74c3c">{{ pname[0]|upper }}</div>
+                    </div>
+                    <div class="player-info">
+                        <div class="player-name">{{ pname }}</div>
+                    </div>
+                    {% if pid == room.host_player_id %}
+                    <div class="player-badge">Hote</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="lobby-actions">
+            {% if player_id == room.host_player_id %}
+            <button id="startBtn" class="btn btn-primary" onclick="startGame()"
+                    {% if room.players|length < 3 %}disabled{% endif %}>
+                Demarrer la partie
+            </button>
+            <p class="waiting-text" id="waitingMsg"
+               {% if room.players|length >= 3 %}style="display:none;"{% endif %}>
+                En attente d'au moins 3 joueurs...
+            </p>
+            {% else %}
+            <p class="waiting-text">En attente que l'hote demarre la partie...</p>
+            {% endif %}
+            <a href="/" class="btn btn-secondary">
+                Quitter le salon
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+    const roomCode = '{{ room.code }}';
+    const isHost = {{ 'true' if player_id == room.host_player_id else 'false' }};
+</script>
+<script src="{{ url_for('static', filename='js/lobby.js') }}"></script>
+{% endblock %}

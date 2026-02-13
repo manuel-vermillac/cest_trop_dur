@@ -1,0 +1,84 @@
+{% extends "base_claude.html" %}
+
+{% block title %}Creer une partie - C'est trop dur!{% endblock %}
+
+{% block extra_css %}
+<style>
+    .create-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-2xl);
+    }
+
+    .create-card {
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .actions-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+        position: relative;
+        z-index: 1;
+    }
+
+    .actions-container .btn {
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .create-container {
+            padding: var(--space-lg);
+        }
+
+        .create-card {
+            padding: var(--space-2xl);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="create-container">
+    <div class="create-card glass-card">
+        <h1 class="game-title">C'est trop dur !</h1>
+        <h2 class="page-title">Creer une partie</h2>
+
+        <div class="info-box">
+            <p class="info-text">
+                Creez une partie et partagez le code avec vos amis (3 a 6 joueurs).
+            </p>
+        </div>
+
+        <form method="POST" action="/create">
+            <div class="form-group">
+                <label class="form-label" for="playerName">Votre nom</label>
+                <input
+                    type="text"
+                    id="playerName"
+                    name="player_name"
+                    class="form-input"
+                    placeholder="Entrez votre nom"
+                    maxlength="20"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="actions-container">
+                <button type="submit" class="btn btn-primary">
+                    Creer la partie
+                </button>
+                <a href="/" class="btn btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

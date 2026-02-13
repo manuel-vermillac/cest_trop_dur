@@ -1,0 +1,174 @@
+{% extends "base_claude.html" %}
+
+{% block title %}C'est trop dur! - Le Pictionary entre amis{% endblock %}
+
+{% block extra_css %}
+<style>
+    .home-container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-2xl);
+    }
+
+    .welcome-card {
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .game-title {
+        font-size: 56px;
+    }
+
+    .rules-section {
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.06) 0%,
+            rgba(255, 255, 255, 0.03) 50%,
+            rgba(255, 255, 255, 0.04) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-lg);
+        padding: var(--space-xl);
+        margin-bottom: var(--space-2xl);
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+            0 2px 8px rgba(0, 0, 0, 0.2),
+            inset 0 1px 1px rgba(255, 255, 255, 0.08),
+            inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+    }
+
+    .rules-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(180deg,
+            rgba(255, 255, 255, 0.04) 0%,
+            transparent 100%);
+        pointer-events: none;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .rules-title {
+        font-family: var(--font-display);
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--accent-gold);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: var(--space-lg);
+        position: relative;
+        z-index: 1;
+    }
+
+    .rules-list {
+        list-style: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    .rule-item {
+        font-size: 15px;
+        line-height: 1.7;
+        color: var(--text-primary);
+        margin-bottom: var(--space-md);
+        padding-left: var(--space-xl);
+        position: relative;
+    }
+
+    .rule-item::before {
+        content: '\25CF';
+        position: absolute;
+        left: 0;
+        color: var(--accent-copper);
+        font-size: 10px;
+        top: 7px;
+    }
+
+    .actions-container {
+        display: flex;
+        gap: var(--space-lg);
+        position: relative;
+        z-index: 1;
+    }
+
+    .actions-container .btn {
+        flex: 1;
+    }
+
+    @media (max-width: 768px) {
+        .home-container {
+            padding: var(--space-lg);
+        }
+
+        .welcome-card {
+            padding: var(--space-2xl);
+        }
+
+        .game-title {
+            font-size: 42px;
+        }
+
+        .game-subtitle {
+            font-size: 16px;
+        }
+
+        .actions-container {
+            flex-direction: column;
+        }
+
+        .actions-container .btn {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .game-title {
+            font-size: 36px;
+        }
+
+        .rules-title {
+            font-size: 18px;
+        }
+
+        .rule-item {
+            font-size: 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="home-container">
+    <div class="welcome-card glass-card">
+        <h1 class="game-title">C'est trop dur !</h1>
+        <p class="game-subtitle">Un jeu de dessin entre amis! Propose une idee difficile, mais trop! 3 a 6 joueurs</p>
+
+        <div class="rules-section">
+            <h2 class="rules-title">Comment jouer ?</h2>
+            <ul class="rules-list">
+                <li class="rule-item">Le piocheur designe une des trois propositions sur la carte, et un dessinateur</li>
+                <li class="rule-item">Le dessinateur dessine, les autres devinent en tapant leur reponse</li>
+                <li class="rule-item">Si personne ne devine, le piocheur prend le relais et fait deviner le meme mot</li>
+                <li class="rule-item">Celui qui fait deviner gagne le point ! Si personne ne devine, le dessinateur (designe) gagne le point</li>
+            </ul>
+        </div>
+
+        <div class="actions-container">
+            <a href="/create" class="btn btn-primary">
+                <span class="btn-icon">+</span>
+                <span>Creer une partie</span>
+            </a>
+            <a href="/join" class="btn btn-secondary">
+                <span class="btn-icon">&rarr;</span>
+                <span>Rejoindre une partie</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

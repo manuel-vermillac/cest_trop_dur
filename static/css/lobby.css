@@ -1,0 +1,191 @@
+/* ============================================
+   C'EST TROP DUR - Lobby Styles
+   ============================================ */
+
+body { overflow-y: auto; }
+
+.lobby-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.lobby-card {
+  max-width: 600px;
+  width: 100%;
+  padding: 40px;
+}
+
+/* Room code display */
+.room-code-box {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.room-code-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.room-code-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  letter-spacing: 12px;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+}
+
+/* Share info */
+.share-box {
+  background: rgba(212, 165, 116, 0.06);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.share-link {
+  display: block;
+  margin-top: 8px;
+  background: var(--bg-input);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--accent-gold);
+  word-break: break-all;
+}
+
+/* Voice controls */
+.voice-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+}
+.voice-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: 2px solid;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+}
+.voice-btn.muted {
+  background: rgba(212, 93, 93, 0.15);
+  border-color: rgba(212, 93, 93, 0.3);
+  color: var(--accent-red);
+}
+.voice-btn.unmuted {
+  background: rgba(107, 207, 127, 0.15);
+  border-color: rgba(107, 207, 127, 0.3);
+  color: var(--accent-green);
+}
+.voice-btn:hover { transform: translateY(-2px); }
+.voice-status {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Players section */
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  color: var(--accent-gold);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.player-count {
+  text-align: center;
+  color: var(--accent-gold);
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.players-list {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.player-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+  transition: var(--transition-smooth);
+  animation: slideInUp 0.3s ease-out;
+}
+.player-item:last-child { margin-bottom: 0; }
+.player-item:hover { background: rgba(255, 255, 255, 0.07); }
+
+.player-item-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+  color: var(--bg-primary);
+}
+
+.player-item-name {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.host-badge {
+  font-size: 0.65rem;
+}
+
+/* Start button area */
+.start-area {
+  margin-top: 20px;
+}
+.btn-full {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.waiting-message {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 500px) {
+  .lobby-card { padding: 28px 20px; }
+  .room-code-value { font-size: 2.5rem; letter-spacing: 8px; }
+}

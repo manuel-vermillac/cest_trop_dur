@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pieuvre - Jeu de Dessin Multijoueur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           DESIGN SYSTEM & CSS VARIABLES
+           ============================================ */
+        :root {
+            /* Palette principale */
+            --bg-primary: #2d1b1f;
+            --bg-secondary: #4a1f2a;
+            --bg-tertiary: #1a0f12;
+            
+            /* Accents dorés/cuivrés */
+            --accent-gold: #d4a574;
+            --accent-copper: #b8865f;
+            --accent-bronze: #8b6348;
+            --accent-light: #e8c9a0;
+            
+            /* Interface */
+            --glass-bg: rgba(20, 10, 15, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --surface-light: rgba(255, 255, 255, 0.05);
+            --surface-hover: rgba(255, 255, 255, 0.1);
+            
+            /* Texte */
+            --text-primary: #f0e6d6;
+            --text-secondary: #c9b8a3;
+            --text-muted: #8a7a6a;
+            --text-bright: #ffffff;
+            
+            /* Canvas */
+            --canvas-bg: #fdfcfa;
+            --canvas-border: linear-gradient(135deg, #d4a574 0%, #b8865f 50%, #d4a574 100%);
+            
+            /* Sémantique */
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #ef4444;
+            
+            /* Ombres */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.5);
+            --glow-gold: 0 0 40px rgba(212, 165, 116, 0.3);
+            
+            /* Espacements */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 24px;
+            --space-2xl: 32px;
+            
+            /* Bordures */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            
+            /* Typographie */
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Manrope', sans-serif;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: 
+                radial-gradient(ellipse at 50% 50%, rgba(74, 31, 42, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 30%, rgba(139, 69, 19, 0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(74, 31, 42, 0.25) 0%, transparent 55%),
+                linear-gradient(135deg, 
+                    #0d0508 0%, 
+                    #1a0d11 15%,
+                    #2d1b1f 35%, 
+                    #3a1f25 50%,
+                    #4a1f2a 65%,
+                    #2d1b1f 85%,
+                    #0d0508 100%
+                );
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Vignettage subtil */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, 
+                transparent 0%, 
+                transparent 40%,
+                rgba(0, 0, 0, 0.15) 70%,
+                rgba(0, 0, 0, 0.35) 100%);
+            pointer-events: none;
+            z-index: 2;
+            mix-blend-mode: multiply;
+        }
+
+        /* Grain texture overlay renforcé */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
+            background-size: 400px 400px;
+            pointer-events: none;
+            opacity: 0.6;
+            mix-blend-mode: overlay;
+            z-index: 3;
+            animation: grainMove 8s steps(10) infinite;
+        }
+
+        @keyframes grainMove {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            20% { transform: translate(-15%, 5%); }
+            30% { transform: translate(7%, -25%); }
+            40% { transform: translate(-5%, 25%); }
+            50% { transform: translate(-25%, 10%); }
+            60% { transform: translate(15%, 0%); }
+            70% { transform: translate(0%, 15%); }
+            80% { transform: translate(-10%, -15%); }
+            90% { transform: translate(20%, 10%); }
+        }
+
+        /* Effet étoilé de fond */
+        .game-container::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(255, 255, 255, 0.3) 0%, transparent 1px),
+                radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.25) 0%, transparent 1px),
+                radial-gradient(circle at 45% 60%, rgba(255, 255, 255, 0.35) 0%, transparent 1px),
+                radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 1px),
+                radial-gradient(circle at 25% 75%, rgba(255, 255, 255, 0.28) 0%, transparent 1px),
+                radial-gradient(circle at 90% 50%, rgba(255, 255, 255, 0.22) 0%, transparent 1px),
+                radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.25) 0%, transparent 1px),
+                radial-gradient(circle at 60% 90%, rgba(255, 255, 255, 0.3) 0%, transparent 1px),
+                radial-gradient(circle at 10% 55%, rgba(255, 255, 255, 0.18) 0%, transparent 1px),
+                radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.24) 0%, transparent 1px),
+                radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.26) 0%, transparent 1px),
+                radial-gradient(circle at 95% 85%, rgba(255, 255, 255, 0.2) 0%, transparent 1px);
+            background-size: 400px 400px, 350px 350px, 450px 450px, 380px 380px, 420px 420px, 390px 390px, 410px 410px, 370px 370px, 440px 440px, 360px 360px, 430px 430px, 400px 400px;
+            background-position: 0 0, 50px 50px, 100px 100px, 25px 25px, 75px 75px, 125px 125px, 40px 40px, 90px 90px, 60px 60px, 110px 110px, 30px 30px, 80px 80px;
+            pointer-events: none;
+            animation: starsMove 120s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes starsMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
+        }
+
+        /* LIGHT LEAKS - fuites lumineuses dans les coins */
+        .game-container::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                /* Coin supérieur droit */
+                radial-gradient(ellipse 600px 500px at 95% -10%, 
+                    rgba(212, 165, 116, 0.18) 0%, 
+                    rgba(212, 165, 116, 0.10) 25%,
+                    transparent 60%),
+                /* Coin inférieur gauche */
+                radial-gradient(ellipse 550px 480px at -8% 105%, 
+                    rgba(184, 134, 95, 0.15) 0%, 
+                    rgba(184, 134, 95, 0.08) 25%,
+                    transparent 58%),
+                /* Bord gauche milieu */
+                radial-gradient(ellipse 400px 600px at -12% 50%, 
+                    rgba(139, 99, 72, 0.12) 0%, 
+                    rgba(139, 99, 72, 0.06) 30%,
+                    transparent 55%),
+                /* Coin supérieur gauche (subtil) */
+                radial-gradient(ellipse 350px 350px at 5% 8%, 
+                    rgba(212, 165, 116, 0.10) 0%, 
+                    transparent 50%),
+                /* Bord droit milieu */
+                radial-gradient(ellipse 380px 550px at 108% 45%, 
+                    rgba(184, 134, 95, 0.11) 0%, 
+                    rgba(184, 134, 95, 0.05) 28%,
+                    transparent 52%);
+            filter: blur(40px);
+            animation: lightLeaksMove 12s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes lightLeaksMove {
+            0%, 100% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 0.75;
+            }
+            33% { 
+                transform: translate(-3%, 2%) scale(1.05);
+                opacity: 0.9;
+            }
+            66% { 
+                transform: translate(2%, -3%) scale(0.98);
+                opacity: 0.8;
+            }
+        }
+
+        /* ============================================
+           LAYOUT PRINCIPAL
+           ============================================ */
+        .game-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: var(--space-lg);
+            gap: var(--space-lg);
+        }
+
+        /* ============================================
+           TOP BAR
+           ============================================ */
+        .top-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xl);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Branding du jeu */
+        .game-branding {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-bright);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.8),
+                0 4px 16px rgba(212, 165, 116, 0.4),
+                0 0 40px rgba(212, 165, 116, 0.2);
+            position: relative;
+        }
+
+        .game-branding::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--accent-gold) 50%, 
+                transparent 100%);
+            box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+        }
+
+        .top-bar-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2xl);
+            width: 100%;
+        }
+
+        .round-indicator {
+            font-family: var(--font-display);
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .round-number {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .timer-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .timer-ring {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-copper) 50%, var(--accent-gold) 100%);
+            padding: 8px;
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.5),
+                0 16px 48px rgba(0, 0, 0, 0.4),
+                0 0 100px rgba(212, 165, 116, 0.6),
+                0 0 140px rgba(212, 165, 116, 0.4),
+                0 0 200px rgba(212, 165, 116, 0.2),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+            animation: timerPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        /* Halo lumineux externe renforcé */
+        .timer-ring::before {
+            content: '';
+            position: absolute;
+            inset: -30px;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(212, 165, 116, 0.25) 0%, 
+                rgba(212, 165, 116, 0.12) 40%,
+                transparent 70%);
+            animation: timerGlow 3s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        /* Anneau de lumière externe */
+        .timer-ring::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                transparent 40%, 
+                rgba(212, 165, 116, 0.3) 45%,
+                rgba(212, 165, 116, 0.5) 50%,
+                rgba(212, 165, 116, 0.3) 55%,
+                transparent 60%);
+            animation: timerRingPulse 3s ease-in-out infinite;
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { 
+                box-shadow: 
+                    0 8px 24px rgba(0, 0, 0, 0.5),
+                    0 16px 48px rgba(0, 0, 0, 0.4),
+                    0 0 100px rgba(212, 165, 116, 0.6),
+                    0 0 140px rgba(212, 165, 116, 0.4),
+                    0 0 200px rgba(212, 165, 116, 0.2),
+                    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 
+                    0 8px 24px rgba(0, 0, 0, 0.5),
+                    0 16px 48px rgba(0, 0, 0, 0.4),
+                    0 0 120px rgba(212, 165, 116, 0.8),
+                    0 0 180px rgba(212, 165, 116, 0.5),
+                    0 0 240px rgba(212, 165, 116, 0.3),
+                    inset 0 2px 4px rgba(255, 255, 255, 0.4),
+                    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+                transform: scale(1.03);
+            }
+        }
+
+        @keyframes timerGlow {
+            0%, 100% { 
+                opacity: 0.6; 
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.15);
+            }
+        }
+
+        @keyframes timerRingPulse {
+            0%, 100% { 
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        .timer-ring-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(58, 31, 37, 0.8) 0%, transparent 50%),
+                linear-gradient(180deg, #3a1f25 0%, #2d1b1f 50%, #1a0d11 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(212, 165, 116, 0.4);
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Effet de brillance subtil */
+        .timer-ring-inner::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 40%;
+            height: 30%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+            border-radius: 50%;
+        }
+
+        .timer-value {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-light);
+            text-shadow: 
+                0 2px 4px rgba(0, 0, 0, 0.8),
+                0 4px 16px rgba(212, 165, 116, 0.6),
+                0 0 30px rgba(212, 165, 116, 0.4);
+            letter-spacing: -1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Zone mot à dessiner */
+        .word-to-draw {
+            background: linear-gradient(135deg, 
+                rgba(212, 165, 116, 0.15) 0%, 
+                rgba(184, 134, 95, 0.12) 50%,
+                rgba(212, 165, 116, 0.08) 100%);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 2px solid rgba(212, 165, 116, 0.4);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl) var(--space-2xl);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(212, 165, 116, 0.15),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            min-width: 280px;
+        }
+
+        /* Reflet lumineux en haut */
+        .word-to-draw::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Glow subtil externe */
+        .word-to-draw::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(ellipse, 
+                rgba(212, 165, 116, 0.12) 0%, 
+                transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .word-to-draw-label {
+            font-family: var(--font-body);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-copper);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            position: relative;
+            z-index: 1;
+        }
+
+        .word-to-draw-label::before {
+            content: '✏️';
+            font-size: 14px;
+        }
+
+        .word-to-draw-text {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-bright);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(212, 165, 116, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* État masqué pour les devineurs */
+        .word-to-draw.hidden {
+            background: linear-gradient(135deg, 
+                rgba(30, 15, 20, 0.7) 0%, 
+                rgba(20, 10, 15, 0.6) 100%);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .word-to-draw.hidden::after {
+            background: radial-gradient(ellipse, 
+                rgba(0, 0, 0, 0.2) 0%, 
+                transparent 70%);
+        }
+
+        .word-to-draw.hidden .word-to-draw-label {
+            color: var(--text-muted);
+        }
+
+        .word-to-draw.hidden .word-to-draw-text {
+            color: var(--text-muted);
+            letter-spacing: 12px;
+            text-shadow: none;
+            filter: blur(8px);
+            user-select: none;
+        }
+
+        .mic-toggle {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md) var(--space-xl);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .mic-toggle:hover {
+            background: var(--surface-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .mic-icon {
+            font-size: 18px;
+        }
+
+        .mic-status {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .settings-icon {
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .settings-icon:hover {
+            transform: rotate(90deg);
+        }
+
+        /* ============================================
+           MAIN CONTENT AREA
+           ============================================ */
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: var(--space-xl);
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* ============================================
+           CLASSEMENT (GAUCHE)
+           ============================================ */
+        .scoreboard {
+            background: linear-gradient(135deg, 
+                rgba(20, 10, 15, 0.92) 0%, 
+                rgba(30, 15, 20, 0.85) 50%,
+                rgba(20, 10, 15, 0.88) 100%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                0 16px 64px rgba(0, 0, 0, 0.3),
+                0 0 80px rgba(0, 0, 0, 0.25),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Reflet subtil en haut renforcé */
+        .scoreboard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 40%,
+                transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Bordure lumineuse subtile */
+        .scoreboard::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-lg);
+            padding: 1px;
+            background: linear-gradient(135deg,
+                rgba(212, 165, 116, 0.15) 0%,
+                transparent 50%,
+                rgba(212, 165, 116, 0.1) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .scoreboard-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .crown-icon {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 8px rgba(212, 165, 116, 0.5));
+        }
+
+        .scoreboard-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-bright);
+            letter-spacing: 1px;
+        }
+
+        .players-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .players-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .players-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .players-list::-webkit-scrollbar-thumb {
+            background: var(--accent-copper);
+            border-radius: 3px;
+        }
+
+        .player-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-lg);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.06) 0%, 
+                rgba(255, 255, 255, 0.03) 50%,
+                rgba(255, 255, 255, 0.04) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.08),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Relief lumineux en haut de la carte */
+        .player-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.06) 0%, 
+                transparent 100%);
+            pointer-events: none;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+
+        /* Effet de brillance au survol */
+        .player-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.12) 50%, 
+                transparent 100%);
+            transition: left 0.6s ease;
+            z-index: 1;
+        }
+
+        .player-item:hover::before {
+            left: 100%;
+        }
+
+        .player-item:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 50%,
+                rgba(255, 255, 255, 0.06) 100%);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateX(6px);
+            box-shadow: 
+                -6px 0 20px rgba(0, 0, 0, 0.25),
+                0 4px 12px rgba(0, 0, 0, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+        }
+
+        .player-item.active {
+            background: linear-gradient(135deg, 
+                rgba(212, 165, 116, 0.28) 0%, 
+                rgba(184, 134, 95, 0.18) 50%,
+                rgba(212, 165, 116, 0.14) 100%);
+            border: 1px solid rgba(212, 165, 116, 0.6);
+            box-shadow: 
+                0 0 35px rgba(212, 165, 116, 0.3),
+                0 4px 20px rgba(0, 0, 0, 0.35),
+                inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                inset 0 0 50px rgba(212, 165, 116, 0.12),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+            transform: translateX(0);
+        }
+
+        .player-item.active::after {
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.12) 0%, 
+                transparent 100%);
+        }
+
+        .player-item.active:hover {
+            transform: translateX(6px);
+        }
+
+        .player-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, 
+                var(--accent-gold) 0%, 
+                var(--accent-copper) 50%,
+                var(--accent-gold) 100%);
+            padding: 3px;
+            position: relative;
+            box-shadow: 
+                0 4px 12px rgba(212, 165, 116, 0.3),
+                0 0 20px rgba(212, 165, 116, 0.2),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .player-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .player-status-icon {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 20px;
+            height: 20px;
+            background: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            border: 2px solid var(--bg-primary);
+        }
+
+        .player-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .player-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-bright);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-role {
+            display: inline-block;
+            padding: 2px 10px;
+            background: linear-gradient(135deg, var(--accent-copper), var(--accent-bronze));
+            color: var(--bg-primary);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.5px;
+        }
+
+        .player-points-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .player-score {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            font-family: var(--font-display);
+        }
+
+        /* ============================================
+           CANVAS CENTRAL
+           ============================================ */
+        .canvas-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+
+        .canvas-container {
+            position: relative;
+            background: linear-gradient(145deg, #faf8f5 0%, #ffffff 50%, #fdfcfa 100%);
+            border-radius: var(--radius-lg);
+            padding: 12px;
+            box-shadow: 
+                0 6px 16px rgba(0, 0, 0, 0.25),
+                0 16px 40px rgba(0, 0, 0, 0.4),
+                0 32px 72px rgba(0, 0, 0, 0.5),
+                0 48px 110px rgba(0, 0, 0, 0.35),
+                0 0 120px rgba(212, 165, 116, 0.15),
+                0 0 200px rgba(212, 165, 116, 0.08),
+                inset 0 2px 4px rgba(255, 255, 255, 0.95),
+                inset 0 -2px 3px rgba(0, 0, 0, 0.12);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: canvasFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes canvasFloat {
+            0%, 100% { 
+                transform: translateY(0px);
+            }
+            50% { 
+                transform: translateY(-6px);
+            }
+        }
+
+        .canvas-container:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.3),
+                0 20px 48px rgba(0, 0, 0, 0.45),
+                0 40px 80px rgba(0, 0, 0, 0.55),
+                0 56px 120px rgba(0, 0, 0, 0.4),
+                0 0 140px rgba(212, 165, 116, 0.22),
+                0 0 240px rgba(212, 165, 116, 0.12),
+                inset 0 2px 4px rgba(255, 255, 255, 0.95),
+                inset 0 -2px 3px rgba(0, 0, 0, 0.12);
+            animation-play-state: paused;
+        }
+
+        /* Bordure dégradée élégante avec animation */
+        .canvas-container::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            background: linear-gradient(135deg, 
+                var(--accent-light) 0%, 
+                var(--accent-gold) 20%,
+                var(--accent-copper) 40%, 
+                var(--accent-bronze) 50%,
+                var(--accent-copper) 60%,
+                var(--accent-gold) 80%, 
+                var(--accent-light) 100%);
+            border-radius: calc(var(--radius-lg) + 3px);
+            z-index: -1;
+            opacity: 0.98;
+            box-shadow: 
+                0 0 40px rgba(212, 165, 116, 0.35),
+                inset 0 1px 2px rgba(255, 255, 255, 0.5),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Halo doux externe chaud */
+        .canvas-container::after {
+            content: '';
+            position: absolute;
+            inset: -50px;
+            background: radial-gradient(ellipse, 
+                rgba(212, 165, 116, 0.12) 0%, 
+                rgba(212, 165, 116, 0.06) 40%,
+                transparent 70%);
+            border-radius: 50%;
+            z-index: -2;
+            pointer-events: none;
+            animation: canvasGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes canvasGlow {
+            0%, 100% { 
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        .drawing-canvas {
+            width: 100%;
+            height: 100%;
+            background: var(--canvas-bg);
+            border-radius: calc(var(--radius-md) + 2px);
+            cursor: crosshair;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.006) 2px, rgba(0,0,0,.006) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.006) 2px, rgba(0,0,0,.006) 4px);
+            box-shadow: 
+                inset 0 1px 3px rgba(0, 0, 0, 0.08),
+                inset 0 0 20px rgba(0, 0, 0, 0.02);
+        }
+
+        /* ============================================
+           OUTILS DE DESSIN
+           ============================================ */
+        .drawing-tools {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-lg);
+            padding: var(--space-lg) var(--space-xl);
+            background: linear-gradient(135deg, 
+                rgba(20, 10, 15, 0.88) 0%, 
+                rgba(30, 15, 20, 0.82) 100%);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.12),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Reflet en haut de la toolbar */
+        .drawing-tools::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.06) 0%, 
+                transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Bordure lumineuse subtile */
+        .drawing-tools::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-md);
+            padding: 1px;
+            background: linear-gradient(135deg,
+                rgba(212, 165, 116, 0.12) 0%,
+                transparent 50%,
+                rgba(212, 165, 116, 0.08) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .tools-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .color-palette {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .color-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.18);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-option::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .color-option:hover {
+            transform: scale(1.2) translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.4),
+                0 0 20px currentColor,
+                inset 0 1px 2px rgba(255, 255, 255, 0.4),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-option.active {
+            transform: scale(1.25) translateY(-3px);
+            border-color: var(--text-bright);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.5),
+                0 0 30px currentColor,
+                inset 0 1px 2px rgba(255, 255, 255, 0.5),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-option.active::before {
+            border-color: currentColor;
+            box-shadow: 0 0 25px currentColor;
+            opacity: 1;
+        }
+
+        .color-black { background: #2c2c2c; color: #2c2c2c; }
+        .color-red { background: #e63946; color: #e63946; }
+        .color-orange { background: #f77f00; color: #f77f00; }
+        .color-green { background: #2a9d8f; color: #2a9d8f; }
+        .color-blue { background: #457b9d; color: #457b9d; }
+        .color-purple { background: #9d4edd; color: #9d4edd; }
+        .color-white { background: #f8f9fa; color: #f8f9fa; }
+
+        .tool-divider {
+            width: 1px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 0 var(--space-sm);
+        }
+
+        .brush-sizes {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .size-btn {
+            padding: var(--space-sm) var(--space-lg);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 100%);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .size-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .size-btn:hover::before {
+            opacity: 1;
+        }
+
+        .size-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.12) 0%, 
+                rgba(255, 255, 255, 0.06) 100%);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-bright);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .size-btn.active {
+            background: linear-gradient(135deg, 
+                var(--accent-gold) 0%, 
+                var(--accent-copper) 100%);
+            border-color: var(--accent-gold);
+            color: var(--bg-primary);
+            box-shadow: 
+                0 4px 16px rgba(212, 165, 116, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .size-btn.active::before {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.2) 0%, 
+                transparent 100%);
+            opacity: 1;
+        }
+
+        .tool-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .tool-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tool-btn:hover::before {
+            opacity: 1;
+        }
+
+        .tool-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.15) 0%, 
+                rgba(255, 255, 255, 0.08) 100%);
+            border-color: rgba(255, 255, 255, 0.25);
+            color: var(--text-bright);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 6px 16px rgba(0, 0, 0, 0.25),
+                0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .tool-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .reset-btn {
+            padding: var(--space-md) var(--space-xl);
+            background: linear-gradient(135deg, 
+                rgba(139, 69, 19, 0.35) 0%,
+                rgba(139, 69, 19, 0.25) 100%);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-copper);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: var(--font-body);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reset-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(212, 165, 116, 0.2) 0%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .reset-btn:hover::before {
+            opacity: 1;
+        }
+
+        .reset-btn:hover {
+            background: linear-gradient(135deg, 
+                rgba(139, 69, 19, 0.5) 0%,
+                rgba(139, 69, 19, 0.35) 100%);
+            border-color: var(--accent-gold);
+            color: var(--text-bright);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 69, 19, 0.3);
+        }
+
+        /* ============================================
+           CHAT (DROITE)
+           ============================================ */
+        .chat-section {
+            background: linear-gradient(135deg, 
+                rgba(20, 10, 15, 0.92) 0%, 
+                rgba(30, 15, 20, 0.85) 50%,
+                rgba(20, 10, 15, 0.88) 100%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.5),
+                0 16px 64px rgba(0, 0, 0, 0.3),
+                0 0 80px rgba(0, 0, 0, 0.25),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Reflet subtil en haut */
+        .chat-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.04) 40%,
+                transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Bordure lumineuse subtile */
+        .chat-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-lg);
+            padding: 1px;
+            background: linear-gradient(135deg,
+                rgba(212, 165, 116, 0.15) 0%,
+                transparent 50%,
+                rgba(212, 165, 116, 0.1) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .chat-header {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-bright);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            padding-right: var(--space-sm);
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--accent-copper);
+            border-radius: 3px;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            animation: messageSlideIn 0.3s ease;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-copper));
+            padding: 2px;
+            flex-shrink: 0;
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.06) 0%, 
+                rgba(255, 255, 255, 0.03) 100%);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: 12px 12px 12px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .message-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .message-author {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-light);
+            margin-bottom: 6px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .message-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.5;
+            word-wrap: break-word;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-correct {
+            background: linear-gradient(135deg, 
+                rgba(74, 222, 128, 0.25) 0%, 
+                rgba(74, 222, 128, 0.16) 50%,
+                rgba(74, 222, 128, 0.12) 100%);
+            border: 1px solid rgba(74, 222, 128, 0.5);
+            padding: var(--space-lg);
+            border-radius: 14px;
+            box-shadow: 
+                0 0 30px rgba(74, 222, 128, 0.25),
+                0 4px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                inset 0 0 40px rgba(74, 222, 128, 0.15);
+            position: relative;
+            overflow: hidden;
+            animation: successAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes successAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+                box-shadow: 
+                    0 0 0 rgba(74, 222, 128, 0),
+                    0 0 0 rgba(0, 0, 0, 0),
+                    inset 0 0 0 rgba(255, 255, 255, 0),
+                    inset 0 0 0 rgba(74, 222, 128, 0);
+            }
+            60% {
+                transform: translateY(-5px) scale(1.03);
+                box-shadow: 
+                    0 0 40px rgba(74, 222, 128, 0.4),
+                    0 6px 20px rgba(0, 0, 0, 0.35),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                    inset 0 0 50px rgba(74, 222, 128, 0.2);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                box-shadow: 
+                    0 0 30px rgba(74, 222, 128, 0.25),
+                    0 4px 16px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+                    inset 0 0 40px rgba(74, 222, 128, 0.15);
+            }
+        }
+
+        .message-correct::before {
+            background: linear-gradient(180deg, 
+                rgba(74, 222, 128, 0.15) 0%, 
+                transparent 100%);
+        }
+
+        /* Particules de succès */
+        .message-correct::after {
+            content: '✨';
+            position: absolute;
+            top: 50%;
+            right: var(--space-lg);
+            transform: translateY(-50%);
+            font-size: 20px;
+            animation: successSparkle 1.5s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        @keyframes successSparkle {
+            0%, 100% { 
+                opacity: 0.6;
+                transform: translateY(-50%) scale(1) rotate(0deg);
+            }
+            50% { 
+                opacity: 1;
+                transform: translateY(-50%) scale(1.2) rotate(180deg);
+            }
+        }
+
+        .message-correct .message-author {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+        }
+
+        .message-correct .message-text {
+            color: var(--success);
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+        }
+
+        .points-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-copper));
+            color: var(--bg-primary);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            margin-left: var(--space-sm);
+            animation: pointsBounce 0.5s ease;
+        }
+
+        @keyframes pointsBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: var(--space-md) var(--space-lg);
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            color: var(--text-bright);
+            font-size: 14px;
+            font-family: var(--font-body);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .chat-input:focus {
+            background: var(--surface-hover);
+            border-color: var(--accent-copper);
+            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        }
+
+        .chat-send-group {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .chat-btn {
+            width: 44px;
+            height: 44px;
+            background: var(--surface-light);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .chat-btn:hover {
+            background: var(--surface-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-bright);
+        }
+
+        .chat-submit {
+            padding: 0 var(--space-xl);
+            width: auto;
+            background: linear-gradient(135deg, 
+                var(--accent-gold) 0%,
+                var(--accent-copper) 50%,
+                var(--accent-bronze) 100%);
+            border: none;
+            color: var(--bg-primary);
+            font-weight: 700;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 12px rgba(212, 165, 116, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.2) 0%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .chat-submit:hover::before {
+            opacity: 1;
+        }
+
+        .chat-submit:hover {
+            background: linear-gradient(135deg, 
+                var(--accent-light) 0%,
+                var(--accent-gold) 50%,
+                var(--accent-copper) 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 6px 20px rgba(212, 165, 116, 0.5),
+                0 0 30px rgba(212, 165, 116, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .chat-submit:active {
+            transform: translateY(-1px) scale(1);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 1400px) {
+            .main-content {
+                grid-template-columns: 280px 1fr 340px;
+                gap: var(--space-md);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr auto;
+            }
+            
+            .scoreboard,
+            .chat-section {
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <!-- Branding du jeu -->
+            <div class="game-branding">C'est trop dur!</div>
+            
+            <!-- Ligne principale avec timer + mot -->
+            <div class="top-bar-main">
+                <div class="round-indicator">
+                    Tour <span class="round-number">1</span>/3
+                </div>
+                
+                <div class="timer-container">
+                    <div class="timer-ring">
+                        <div class="timer-ring-inner">
+                            <div class="timer-value">28s</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Zone mot à dessiner - visible pour dessinateur/picker -->
+                <div class="word-to-draw">
+                    <div class="word-to-draw-label">Mot à dessiner</div>
+                    <div class="word-to-draw-text">PIEUVRE</div>
+                </div>
+
+                <!-- Zone mot à dessiner - masquée pour devineurs (décommenter pour tester)
+                <div class="word-to-draw hidden">
+                    <div class="word-to-draw-label">Mot à dessiner</div>
+                    <div class="word-to-draw-text">????????</div>
+                </div>
+                -->
+                
+                <div class="mic-toggle">
+                    <span class="mic-icon">🎤</span>
+                    <span class="mic-status">ON</span>
+                    <span class="settings-icon">⚙</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- CLASSEMENT -->
+            <aside class="scoreboard">
+                <div class="scoreboard-header">
+                    <span class="crown-icon">👑</span>
+                    <h2 class="scoreboard-title">Classement</h2>
+                </div>
+                
+                <div class="players-list">
+                    <div class="player-item active">
+                        <div class="player-avatar">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="Jules">
+                            <div class="player-status-icon">✏️</div>
+                        </div>
+                        <div class="player-info">
+                            <div class="player-name">Jules</div>
+                            <span class="player-role">Dessine</span>
+                        </div>
+                    </div>
+                    
+                    <div class="player-item">
+                        <div class="player-avatar">
+                            <img src="https://i.pravatar.cc/150?img=45" alt="Rachel">
+                            <div class="player-status-icon">✓</div>
+                        </div>
+                        <div class="player-info">
+                            <div class="player-name">Rachel</div>
+                            <div class="player-points-text">
+                                ✓ <span>40 pts</span>
+                            </div>
+                        </div>
+                        <div class="player-score">40</div>
+                    </div>
+                    
+                    <div class="player-item">
+                        <div class="player-avatar">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="Max">
+                            <div class="player-status-icon">✓</div>
+                        </div>
+                        <div class="player-info">
+                            <div class="player-name">Max</div>
+                            <div class="player-points-text">
+                                ✓ <span>10 pts</span>
+                            </div>
+                        </div>
+                        <div class="player-score">10</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CANVAS CENTRAL -->
+            <section class="canvas-section">
+                <div class="canvas-container">
+                    <canvas class="drawing-canvas" width="800" height="500"></canvas>
+                </div>
+                
+                <div class="drawing-tools">
+                    <div class="tools-group">
+                        <div class="color-palette">
+                            <div class="color-option color-black active"></div>
+                            <div class="color-option color-red"></div>
+                            <div class="color-option color-orange"></div>
+                            <div class="color-option color-green"></div>
+                            <div class="color-option color-blue"></div>
+                            <div class="color-option color-purple"></div>
+                            <div class="color-option color-white"></div>
+                        </div>
+                    </div>
+
+                    <div class="tool-divider"></div>
+
+                    <div class="tools-group">
+                        <div class="brush-sizes">
+                            <button class="size-btn">Fin</button>
+                            <button class="size-btn active">Moyen</button>
+                            <button class="size-btn">Épais</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-divider"></div>
+
+                    <div class="tools-group">
+                        <div class="tool-actions">
+                            <button class="tool-btn" title="Pinceau">●</button>
+                            <button class="tool-btn" title="Pinceau fin">●</button>
+                            <button class="tool-btn" title="Gomme">○</button>
+                            <button class="tool-btn" title="Annuler">↗</button>
+                            <button class="tool-btn" title="Supprimer">🗑</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-divider"></div>
+
+                    <button class="reset-btn">
+                        <span>↻</span>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- CHAT -->
+            <aside class="chat-section">
+                <h2 class="chat-header">Chat</h2>
+                
+                <div class="chat-messages">
+                    <div class="chat-message message-correct">
+                        <div class="message-avatar">
+                            <img src="https://i.pravatar.cc/150?img=45" alt="Rachel">
+                        </div>
+                        <div class="message-content">
+                            <div class="message-author">
+                                Rachel
+                                <span class="points-badge">
+                                    ✨ +300 points!
+                                </span>
+                            </div>
+                            <div class="message-text">pieuvre</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-message">
+                        <div class="message-avatar">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="Max">
+                        </div>
+                        <div class="message-content">
+                            <div class="message-author">Max</div>
+                            <div class="message-text">C'est presque!</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        placeholder="Tapez votre réponse..."
+                    >
+                    <div class="chat-send-group">
+                        <button class="chat-btn">↻</button>
+                        <button class="chat-btn">↗</button>
+                        <button class="chat-submit">Valider</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Interaction simple pour démonstration
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Gestion basique du canvas
+        const canvas = document.querySelector('.drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currentColor = '#2c2c2c';
+        let currentSize = 3;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = currentSize;
+            ctx.lineCap = 'round';
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        // Reset canvas
+        document.querySelector('.reset-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+    </script>
+</body>
+</html>
