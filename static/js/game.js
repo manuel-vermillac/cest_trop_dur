@@ -92,13 +92,27 @@ function updateUI(state) {
 
   // Word display
   const wordDisplay = document.getElementById('wordDisplay');
-  if ((amDrawer || amPicker) && state.current_word) {
-    wordDisplay.textContent = state.current_word;
-  } else if (state.word_hint) {
-    wordDisplay.textContent = state.word_hint;
-  } else if (state.current_word) {
-    wordDisplay.textContent = state.current_word;
+  const wordDisplayContainer = document.getElementById('wordDisplayContainer');
+  const timerContainer = document.getElementById('timerContainer');
+
+  // Afficher le timer et le mot uniquement pendant les phases de dessin
+  if (isDrawingPhase) {
+    wordDisplayContainer.style.visibility = 'visible';
+    timerContainer.style.visibility = 'visible';
+
+    if ((amDrawer || amPicker) && state.current_word) {
+      wordDisplay.textContent = state.current_word;
+    } else if (state.word_hint) {
+      wordDisplay.textContent = state.word_hint;
+    } else if (state.current_word) {
+      wordDisplay.textContent = state.current_word;
+    } else {
+      wordDisplay.textContent = '';
+    }
   } else {
+    // Cacher en gardant l'espace pendant choosing, round_end, game_over
+    wordDisplayContainer.style.visibility = 'hidden';
+    timerContainer.style.visibility = 'hidden';
     wordDisplay.textContent = '';
   }
 
@@ -225,7 +239,7 @@ function updateTimer(remaining) {
       }
     }, 250);
   } else {
-    timerText.textContent = '--';
+    timerText.textContent = '00';
     timerProgress.style.strokeDashoffset = '0';
     timerContainer.classList.remove('warning', 'caution');
     clearInterval(timerInterval);
@@ -385,13 +399,12 @@ function showRoundEndOverlay(word, state) {
     msg.textContent = '';
   }
 
-  if (isHost) {
-    document.getElementById('nextTurnBtn').classList.remove('hidden');
-    document.getElementById('waitingNextMsg').classList.add('hidden');
-  } else {
-    document.getElementById('nextTurnBtn').classList.add('hidden');
-    document.getElementById('waitingNextMsg').classList.remove('hidden');
-  }
+  // Passage automatique au tour suivant après 4 secondes
+  setTimeout(() => {
+    if (isHost) {
+      requestNextTurn();
+    }
+  }, 4000);
 }
 
 function showGameOverOverlay(state) {
@@ -551,9 +564,9 @@ canvas.addEventListener('touchend', stopDrawing);
 // ==================== TOOL CONTROLS ====================
 
 // Color buttons
-document.querySelectorAll('.color-btn').forEach(btn => {
+document.querySelectorAll('.color-option').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.color-option').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentColor = btn.dataset.color;
     isEraser = false;
@@ -575,7 +588,7 @@ document.getElementById('eraserBtn').addEventListener('click', function () {
   isEraser = !isEraser;
   this.classList.toggle('active');
   if (isEraser) {
-    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.color-option').forEach(b => b.classList.remove('active'));
   }
 });
 

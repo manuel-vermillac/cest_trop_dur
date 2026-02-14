@@ -686,7 +686,7 @@ def handle_leave_voice(data):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("accueil.html")
 
 
 @app.route("/create", methods=["GET", "POST"])
@@ -707,7 +707,7 @@ def create_room():
         logger.info(f"Salon {code} cree par {player_name}")
         return redirect(url_for("lobby", code=code))
 
-    return render_template("create_room.html")
+    return render_template("creer-partie.html")
 
 
 @app.route("/join", methods=["GET", "POST"])
@@ -718,7 +718,7 @@ def join_room():
         raw_name = request.form.get("player_name", "")
 
         if code not in rooms:
-            return render_template("join_room.html", error="Code de partie invalide")
+            return render_template("rejoindre-partie.html", error="Code de partie invalide")
 
         room = rooms[code]
         player_id = generate_room_code()
@@ -727,13 +727,13 @@ def join_room():
         session['player_name'] = player_name
 
         if not room.add_player(player_id, player_name):
-            return render_template("join_room.html", error="Impossible de rejoindre cette partie")
+            return render_template("rejoindre-partie.html", error="Impossible de rejoindre cette partie")
 
         logger.info(f"Joueur {player_name} a rejoint le salon {code}")
         emit_lobby_state(code)
         return redirect(url_for("lobby", code=code))
 
-    return render_template("join_room.html")
+    return render_template("rejoindre-partie.html")
 
 
 @app.route("/lobby/<code>")
@@ -746,7 +746,7 @@ def lobby(code):
         return redirect(url_for("join_room"))
     if room.started:
         return redirect(url_for("play_game", code=code))
-    return render_template("lobby.html", room=room, player_id=player_id)
+    return render_template("salon-attente.html", room=room, player_id=player_id)
 
 
 @app.route("/lobby/<code>/start", methods=["POST"])
@@ -777,7 +777,7 @@ def play_game(code):
         return redirect(url_for("join_room"))
     if not room.started:
         return redirect(url_for("lobby", code=code))
-    return render_template("game.html", room=room, player_id=player_id)
+    return render_template("ecran_de_jeu.html", room=room, player_id=player_id)
 
 
 if __name__ == "__main__":

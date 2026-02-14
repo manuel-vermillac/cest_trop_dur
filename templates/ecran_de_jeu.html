@@ -1,0 +1,220 @@
+{% extends "base_claude.html" %}
+
+{% block title %}Partie en cours - C'est Trop Dur{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/game_claude.css') }}">
+{% endblock %}
+
+{% block background_effects %}
+{# Game uses light leaks from game-container instead of gradient-mesh #}
+{% endblock %}
+
+{% block body %}
+<div class="game-container">
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <!-- Branding du jeu -->
+        <div class="game-branding">C'est trop dur!</div>
+
+        <!-- Ligne principale avec timer + mot -->
+        <div class="top-bar-main">
+            <div class="round-indicator">
+                Tour <span class="round-number" id="roundInfo">{{ room.current_round }}/{{ room.total_rounds }}</span>
+            </div>
+
+            <div class="timer-container" id="timerContainer">
+                <svg class="timer-svg" viewBox="0 0 100 100" style="position: absolute; width: 100%; height: 100%;">
+                    <circle class="timer-bg" cx="50" cy="50" r="45"
+                            fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+                    <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"
+                            fill="none" stroke="var(--accent-gold, #D4AF37)" stroke-width="4"
+                            stroke-linecap="round"
+                            stroke-dasharray="282.7"
+                            stroke-dashoffset="0"
+                            transform="rotate(-90 50 50)"/>
+                </svg>
+                <div class="timer-ring">
+                    <div class="timer-ring-inner">
+                        <div class="timer-value" id="timerText">00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone mot à dessiner - visible pour dessinateur/picker -->
+            <div class="word-to-draw" id="wordDisplayContainer">
+                <div class="word-to-draw-label" id="phaseInfo">Mot à dessiner</div>
+                <div class="word-to-draw-text" id="wordDisplay">???</div>
+            </div>
+
+            <div class="mic-toggle">
+                <button id="voiceMiniBtn" onclick="toggleVoice()" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;color:inherit;">
+                    <span class="mic-icon">🎤</span>
+                    <span class="mic-status" id="voiceLabel">OFF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- CLASSEMENT -->
+        <aside class="scoreboard">
+            <div class="scoreboard-header">
+                <span class="crown-icon">👑</span>
+                <h2 class="scoreboard-title">Classement</h2>
+            </div>
+
+            <div class="players-list" id="scoresPanel">
+                <!-- Dynamically filled by game.js -->
+            </div>
+        </aside>
+
+        <!-- CANVAS CENTRAL -->
+        <section class="canvas-section">
+            <div class="canvas-container">
+                <canvas class="drawing-canvas" id="drawCanvas" width="800" height="500"></canvas>
+
+                <!-- Overlay: Choosing -->
+                <div class="overlay hidden" id="choosingOverlay">
+                    <div class="overlay-content animate-fade-in">
+                        <h2 class="overlay-title">Choisissez un mot</h2>
+                        <div class="card-choices" id="cardChoices"></div>
+                        <div id="designateSection" class="hidden" style="margin-top: 24px;">
+                            <h3 class="overlay-subtitle">Désignez un joueur pour dessiner</h3>
+                            <div class="card-choices" id="playerChoices"></div>
+                        </div>
+                        <div style="display: flex; justify-content: center; margin-top: 24px;">
+                            <button class="btn btn-primary hidden" id="confirmChoiceBtn" onclick="confirmChoice()">
+                                Valider le choix
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overlay: Waiting for choice -->
+                <div class="overlay hidden" id="waitingChooseOverlay">
+                    <div class="overlay-content animate-fade-in">
+                        <div class="waiting-spinner"></div>
+                        <h2 class="overlay-title" id="waitingChooseText">Un joueur choisit un mot...</h2>
+                    </div>
+                </div>
+
+                <!-- Overlay: Round end -->
+                <div class="overlay hidden" id="roundEndOverlay">
+                    <div class="overlay-content animate-fade-in">
+                        <h2 class="overlay-title">Fin du tour !</h2>
+                        <p class="overlay-word">Le mot était : <strong id="revealWord"></strong></p>
+                        <p class="overlay-result" id="roundResultMsg"></p>
+                        <p class="overlay-wait">Prochain tour dans quelques secondes...</p>
+                    </div>
+                </div>
+
+                <!-- Overlay: Game over -->
+                <div class="overlay hidden" id="gameOverOverlay">
+                    <div class="overlay-content animate-fade-in">
+                        <h2 class="overlay-title">Partie terminée !</h2>
+                        <p class="overlay-word">Le mot était : <strong id="revealWordFinal"></strong></p>
+                        <div class="podium" id="podium"></div>
+                        <a href="/" class="btn btn-primary" style="margin-top: 24px;">Retour à l'accueil</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drawing-tools hidden" id="drawTools">
+                <div class="tools-group">
+                    <div class="color-palette">
+                        <div class="color-option color-black active" data-color="#000000"></div>
+                        <div class="color-option color-red" data-color="#e74c3c"></div>
+                        <div class="color-option color-orange" data-color="#f39c12"></div>
+                        <div class="color-option color-green" data-color="#2ecc71"></div>
+                        <div class="color-option color-blue" data-color="#3498db"></div>
+                        <div class="color-option color-purple" data-color="#9b59b6"></div>
+                        <div class="color-option color-white" data-color="#ffffff"></div>
+                    </div>
+                </div>
+
+                <div class="tool-divider"></div>
+
+                <div class="tools-group">
+                    <div class="brush-sizes">
+                        <button class="size-btn active" data-size="3" title="Fin">
+                            <span class="size-dot size-small"></span>
+                        </button>
+                        <button class="size-btn" data-size="8" title="Moyen">
+                            <span class="size-dot size-medium"></span>
+                        </button>
+                        <button class="size-btn" data-size="16" title="Gros">
+                            <span class="size-dot size-large"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tool-divider"></div>
+
+                <div class="tools-group">
+                    <div class="tool-actions">
+                        <button class="tool-btn" id="eraserBtn" title="Gomme">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 20H7L3 16a1 1 0 0 1 0-1.4l9.6-9.6a1 1 0 0 1 1.4 0l7 7a1 1 0 0 1 0 1.4L16 18"/>
+                                <path d="M6.5 13.5 14.5 5.5"/>
+                            </svg>
+                        </button>
+                        <button class="tool-btn" id="clearBtn" title="Effacer tout">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tool-divider"></div>
+
+                <button class="reset-btn">
+                    <span>↻</span>
+                    <span>Reset</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- CHAT -->
+        <aside class="chat-section">
+            <h2 class="chat-header">Chat</h2>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Dynamically filled by game.js -->
+            </div>
+
+            <div class="chat-input-container">
+                <input
+                    type="text"
+                    class="chat-input"
+                    id="chatInput"
+                    placeholder="Tapez votre réponse..."
+                    autocomplete="off"
+                    maxlength="100"
+                >
+                <div class="chat-send-group">
+                    <button class="chat-submit" id="chatSend" onclick="sendGuess()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+    const roomCode = '{{ room.code }}';
+    const myPlayerId = '{{ player_id }}';
+    const isHost = {{ 'true' if player_id == room.host_player_id else 'false' }};
+</script>
+<script src="{{ url_for('static', filename='js/game.js') }}"></script>
+{% endblock %}
