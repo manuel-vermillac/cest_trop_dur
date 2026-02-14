@@ -694,3 +694,14 @@ socket.on('user_left', (data) => {
 });
 
 window.addEventListener('beforeunload', () => stopVoice());
+
+// ==================== SCROLL INITIAL POSITION ====================
+// Position la vue sur le canvas au chargement (cache le scoreboard à gauche)
+window.addEventListener('load', () => {
+  const mainContent = document.querySelector('.main-content');
+  if (mainContent) {
+    // Scroll pour aligner le bord gauche de la fenêtre avec le bord gauche du canvas
+    // Le scoreboard fait ~320px, donc on scroll de cette distance
+    mainContent.scrollLeft = 320;
+  }
+});

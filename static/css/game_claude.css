@@ -34,6 +34,7 @@ body.game-page {
     height: 100vh;
     padding: var(--space-lg);
     gap: var(--space-lg);
+    overflow: hidden;
 }
 
 /* Starfield for game */
@@ -517,10 +518,39 @@ body.game-page {
    ============================================ */
 .main-content {
     display: grid;
-    grid-template-columns: 320px 1fr 380px;
+    /* 3 colonnes : Classement (min 280px) | Canvas (min 500px, prend l'espace restant) | Chat (min 300px) */
+    grid-template-columns: minmax(280px, 320px) minmax(500px, 1fr) minmax(300px, 380px);
+    /* 2 rangées : contenu principal (prend l'espace) | bandeau pub (auto) */
+    grid-template-rows: 1fr auto;
     gap: var(--space-xl);
     flex: 1;
     min-height: 0;
+    /* Défilement horizontal si fenêtre trop petite */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    /* Assurer qu'il n'y a pas de débordement des enfants */
+    align-items: stretch;
+}
+
+/* Scrollbar horizontal styling */
+.main-content::-webkit-scrollbar {
+    height: 10px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-copper));
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, var(--accent-light), var(--accent-gold));
 }
 
 /* ============================================
@@ -546,6 +576,10 @@ body.game-page {
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    /* Assurer que la colonne ne déborde pas */
+    min-width: 280px;
+    width: 100%;
+    height: 100%;
 }
 
 /* Subtle top reflection */
@@ -822,13 +856,17 @@ body.game-page {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
+    /* Remplir la colonne sans débordement */
+    width: 100%;
+    height: 100%;
+    min-width: 0;  /* Permet au flex item de rétrécir en dessous de la taille du contenu */
 }
 
 .canvas-container {
     position: relative;
     background: linear-gradient(145deg, #faf8f5 0%, #ffffff 50%, #fdfcfa 100%);
     border-radius: var(--radius-lg);
-    padding: 12px;
+    padding: 12px;  /* Bordure dorée fixe */
     box-shadow:
         0 6px 16px rgba(0, 0, 0, 0.25),
         0 16px 40px rgba(0, 0, 0, 0.4),
@@ -838,12 +876,18 @@ body.game-page {
         0 0 200px rgba(212, 165, 116, 0.08),
         inset 0 2px 4px rgba(255, 255, 255, 0.95),
         inset 0 -2px 3px rgba(0, 0, 0, 0.12);
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     animation: canvasFloat 6s ease-in-out infinite;
+    /* Le container prend toute la largeur de la colonne */
+    width: 100%;
+    height: fit-content;
+    /* Marge supérieure = gap latéral de la grille */
+    margin-top: var(--space-xl);
+    /* S'assurer qu'il ne déborde pas */
+    box-sizing: border-box;
 }
 
 @keyframes canvasFloat {
@@ -920,6 +964,9 @@ body.game-page {
 .drawing-canvas {
     width: 100%;
     height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     background: var(--canvas-bg);
     border-radius: calc(var(--radius-md) + 2px);
     cursor: crosshair;
@@ -940,8 +987,20 @@ body.game-page {
         0 4px 24px rgba(0, 0, 0, 0.4),
         inset 0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: default;
-    max-width: 100%;
-    max-height: 100%;
+
+    /* Le canvas occupe toute la largeur disponible en respectant le ratio 16:10 */
+    width: 100%;
+    height: auto;
+
+    /* Minimum dimensions to maintain 16:10 ratio */
+    min-width: 400px;
+    min-height: 250px;
+
+    /* Hauteur maximale pour laisser place au bandeau pub, toolbar, gaps */
+    max-height: calc(100vh - 350px);
+
+    /* Ratio fixe 16:10 */
+    aspect-ratio: 16 / 10;
     display: block;
 }
 
@@ -1325,6 +1384,10 @@ body.game-page {
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    /* Assurer que la colonne ne déborde pas */
+    min-width: 300px;
+    width: 100%;
+    height: 100%;
 }
 
 /* Subtle top reflection */
@@ -1912,24 +1975,110 @@ body.game-page {
 }
 
 /* ============================================
-   13. RESPONSIVE
+   13. AD BANNER
    ============================================ */
+.ad-banner {
+    /* Span all 3 columns */
+    grid-column: 1 / -1;
+
+    /* Standard leaderboard ad size (728x90) */
+    height: 90px;
+    min-height: 90px;
+
+    /* Glassmorphism styling */
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(212, 165, 116, 0.3);
+    border-radius: var(--radius-lg);
+
+    /* Centering */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Shadows and effects */
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 30px rgba(212, 165, 116, 0.1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+
+    position: relative;
+    overflow: hidden;
+    margin-top: auto;
+}
+
+/* Light reflection at top */
+.ad-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 100%);
+    pointer-events: none;
+}
+
+.ad-banner-text {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    color: var(--accent-gold);
+    text-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(212, 165, 116, 0.3);
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   14. RESPONSIVE
+   ============================================ */
+
+/* Keep 3-column layout on all screen sizes with horizontal scroll */
+@media (max-width: 1600px) {
+    .main-content {
+        grid-template-columns: minmax(250px, 300px) minmax(450px, 1fr) minmax(280px, 350px);
+        gap: var(--space-lg);
+    }
+}
+
 @media (max-width: 1400px) {
     .main-content {
-        grid-template-columns: 280px 1fr 340px;
+        grid-template-columns: 280px minmax(500px, 800px) 320px;
+        gap: var(--space-md);
+    }
+
+    .top-bar-main {
+        gap: var(--space-lg);
+    }
+}
+
+/* Small screens: fixed column widths for consistent scroll */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 280px 700px 320px;
         gap: var(--space-md);
     }
 }
 
-@media (max-width: 1200px) {
-    .main-content {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr auto;
+@media (max-width: 768px) {
+    .top-bar {
+        padding: var(--space-md);
     }
 
-    .scoreboard,
-    .chat-section {
-        max-height: 300px;
+    .main-content {
+        grid-template-columns: 250px 600px 280px;
+        gap: var(--space-sm);
     }
 }
 
