@@ -520,8 +520,7 @@ body.game-page {
     display: grid;
     /* 3 colonnes : Classement (min 280px) | Canvas (min 500px, prend l'espace restant) | Chat (min 300px) */
     grid-template-columns: minmax(280px, 320px) minmax(500px, 1fr) minmax(300px, 380px);
-    /* 2 rangées : contenu principal (prend l'espace) | bandeau pub (auto) */
-    grid-template-rows: 1fr auto;
+    grid-template-rows: 1fr;
     gap: var(--space-xl);
     flex: 1;
     min-height: 0;
@@ -1978,9 +1977,6 @@ body.game-page {
    13. AD BANNER
    ============================================ */
 .ad-banner {
-    /* Span all 3 columns */
-    grid-column: 1 / -1;
-
     /* Standard leaderboard ad size (728x90) */
     height: 90px;
     min-height: 90px;
