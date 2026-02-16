@@ -155,13 +155,16 @@ class Room:
         self.host_player_id = None
 
     def add_player(self, player_id, player_name):
+        if player_id in self.players:
+            return True  # Déjà dans la room
         if len(self.players) >= self.max_players:
-            return False
-        if self.started:
             return False
         self.players[player_id] = player_name
         if self.host_player_id is None:
             self.host_player_id = player_id
+        # Si partie en cours, ajouter au Game aussi
+        if self.started and self.game:
+            self.game.add_player(player_id, player_name)
         return True
 
     def remove_player(self, player_id):
@@ -198,7 +201,7 @@ class Game:
         self.current_word = None
         self.current_card = None
         self.round = 1
-        self.total_rounds = self.num_players
+        self.total_rounds = self.num_players * 3
         # Phases: choosing, drawing_player2, drawing_player1, round_end, game_over
         self.phase = "choosing"
         self.guessed = False  # le mot a-t-il été deviné ?
@@ -209,6 +212,16 @@ class Game:
         self.current_drawer_id = None  # qui dessine actuellement
         self.point_winner_id = None  # qui a gagné le point ce tour
         self.pending_guesses = {}  # {guesser_id: {text, picker_approved, drawer_approved}}
+
+    def add_player(self, player_id, player_name):
+        """Ajoute un joueur en cours de partie."""
+        if player_id in self.player_ids:
+            return  # Déjà dans le jeu
+        self.player_ids.append(player_id)
+        self.player_names.append(player_name)
+        self.num_players = len(self.player_ids)
+        self.total_rounds = self.num_players * 3
+        self.scores[player_id] = 0
 
     @property
     def current_picker_id(self):
@@ -462,8 +475,8 @@ def handle_join_game(data):
     # Aussi une room commune pour le dessin
     socketio_join_room(f"game_{room_code}")
     if room_code in rooms and rooms[room_code].game:
-        state = rooms[room_code].game.get_state(for_player_id=player_id)
-        emit('game_state_updated', state)
+        # Envoyer l'état à tous les joueurs (le nouveau + les existants)
+        emit_game_state(room_code)
 
 
 @socketio.on('draw')
@@ -721,6 +734,14 @@ def join_room():
             return render_template("rejoindre-partie.html", error="Code de partie invalide")
 
         room = rooms[code]
+
+        # Si le navigateur est déjà associé à cette partie, le rediriger directement
+        existing_id = session.get('player_id')
+        if existing_id and existing_id in room.players:
+            if room.started:
+                return redirect(url_for("play_game", code=code))
+            return redirect(url_for("lobby", code=code))
+
         player_id = generate_room_code()
         player_name = validate_player_name(raw_name) or f"Joueur {len(room.players) + 1}"
         session['player_id'] = player_id
@@ -730,6 +751,8 @@ def join_room():
             return render_template("rejoindre-partie.html", error="Impossible de rejoindre cette partie")
 
         logger.info(f"Joueur {player_name} a rejoint le salon {code}")
+        if room.started:
+            return redirect(url_for("play_game", code=code))
         emit_lobby_state(code)
         return redirect(url_for("lobby", code=code))
 
